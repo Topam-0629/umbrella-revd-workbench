@@ -143,6 +143,44 @@ td.m{font-family:var(--mono);white-space:nowrap}
 .lcdbox{display:flex;gap:14px;align-items:center}
 .lcdbox canvas{width:96px;height:128px;border:6px solid #111;border-radius:4px;background:#000;flex:none}
 input[type=range]{width:100%;accent-color:var(--accent)}
+.main.full{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important}.main.full .viewer{display:none}
+#v-screen .sapp{display:flex;flex-direction:column;gap:16px;max-width:1180px}
+#v-screen .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 48px;max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+#v-screen header{display:flex;align-items:baseline;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:10px}
+#v-screen h1{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em}
+#v-screen .sub{color:var(--sub);font-size:13px}
+#v-screen .tabs{display:flex;gap:4px;flex-wrap:wrap}
+#v-screen .tabs button{padding:7px 12px;font-weight:700;font-size:13px;border:1px solid var(--line);border-radius:3px;color:var(--sub)}
+#v-screen .tabs button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+#v-screen .grid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:start}
+#v-screen .dev{display:flex;flex-direction:column;gap:10px;align-items:center}
+#v-screen .frame{background:#121316;padding:18px 14px 30px;border-radius:6px;box-shadow:0 0 0 1px #2a2c31}
+#v-screen .frame canvas{display:block;width:min(480px,calc(100vw - 64px));aspect-ratio:3/4;image-rendering:pixelated;cursor:crosshair;touch-action:none;background:#000}
+#v-screen .tools{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+#v-screen .btn{font-size:12.5px;font-weight:700;border:1px solid var(--fg);padding:6px 10px;border-radius:3px;white-space:nowrap}
+#v-screen .btn.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+#v-screen .btn.warn{border-color:var(--warn);color:var(--warn)}
+#v-screen .side{display:flex;flex-direction:column;gap:16px;min-width:0}
+#v-screen .box{border:1px solid var(--line);padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+#v-screen .box h2{margin:0;font-size:13px;font-weight:700;letter-spacing:.04em;display:flex;justify-content:space-between;gap:8px}
+#v-screen .box h2 span{color:var(--sub);font-weight:500}
+#v-screen .els{display:flex;flex-direction:column}
+#v-screen .els button{display:grid;grid-template-columns:64px minmax(0,1fr);gap:8px;text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);font-size:13px}
+#v-screen .els button[aria-pressed="true"]{background:var(--accent-soft)}
+#v-screen .els .k{font-size:11.5px;color:var(--sub);font-weight:700}
+#v-screen .els .v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-screen .form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 10px}
+#v-screen .form label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--sub);font-weight:700;min-width:0}
+#v-screen .form label.w2{grid-column:span 2}
+#v-screen .form label.w4{grid-column:1/-1}
+#v-screen .form input,#v-screen .form select,#v-screen .form textarea{border:1px solid var(--line);background:var(--bg);padding:6px 8px;border-radius:3px;font-size:13.5px;color:var(--fg);font-weight:500;min-width:0;width:100%}
+#v-screen .form input[type=color]{padding:2px;height:34px}
+#v-screen pre{margin:0;background:var(--soft);border:1px solid var(--line);padding:10px;font-family:var(--mono);font-size:12px;line-height:1.5;overflow:auto;max-height:340px;white-space:pre}
+#v-screen .note{font-size:12.5px;color:var(--sub)}
+#v-screen .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+#v-screen ol.steps{margin:0;padding-left:20px;font-size:13.5px;line-height:1.7}
+#v-screen .kbd{font-family:var(--mono);font-weight:700;font-size:12.5px;border:1px solid var(--line);padding:0 5px;border-radius:3px}
+@media (max-width:820px){#v-screen .grid{grid-template-columns:minmax(0,1fr)}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 <div class="app">
@@ -155,6 +193,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       <button role="tab" data-t="wire" aria-selected="false">배선</button>
       <button role="tab" data-t="anim" aria-selected="false">작동</button>
       <button role="tab" data-t="test" aria-selected="false">전원 시험</button>
+      <button role="tab" data-t="screen" aria-selected="false">화면 앱</button>
     </nav>
   </header>
   <div class="main">
@@ -178,10 +217,208 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       <section class="view" id="v-wire" hidden></section>
       <section class="view" id="v-anim" hidden></section>
       <section class="view" id="v-test" hidden></section>
+      <section id="v-screen" hidden><div class="sapp">
+  <div class="note">윗면 2.4인치 화면(240 × 320)에 띄울 안내 화면을 그리면 ESP32 코드가 만들어집니다. 「작동」 탭의 윗면 화면도 여기서 만든 화면으로 바뀝니다.</div>
+  <div class="tabs" id="sc-tabs"></div>
+  <div class="grid">
+    <div class="dev">
+      <div class="frame"><canvas id="sc-cv" width="240" height="320" aria-label="화면 미리보기"></canvas></div>
+      <div class="tools">
+        <button class="btn" data-add="text">+ 한글 글자</button>
+        <button class="btn" data-add="rect">+ 사각형</button>
+        <button class="btn" data-add="line">+ 가로선</button>
+        <button class="btn" data-add="var">+ 숫자·영문 값</button>
+      </div>
+      <div class="note" id="sc-saveNote">저장을 연결하는 중…</div>
+    </div>
+    <div class="side">
+      <div class="box"><h2>화면 <span id="sc-scrInfo"></span></h2>
+        <div class="form">
+          <label class="w2">화면 이름<input id="sc-sName" maxlength="24"></label>
+          <label>배경색<input type="color" id="sc-sBg"></label>
+          <label>화면 방향<select id="sc-sRot"><option value="0">0 (기본)</option><option value="2">2 (거꾸로)</option></select></label>
+          <label class="w4">언제 보이나 (메모)<input id="sc-sWhen" maxlength="80"></label>
+        </div>
+        <div class="row"><button class="btn" id="sc-dupScr">이 화면 복제</button><button class="btn" id="sc-newScr">새 화면</button><button class="btn warn" id="sc-delScr">화면 지우기</button></div>
+      </div>
+      <div class="box"><h2>요소 <span>눌러서 고르고, 화면에서 끌어 옮기기</span></h2><div class="els" id="sc-els"></div></div>
+      <div class="box" id="sc-propBox"><h2>고른 요소 <span id="sc-propKind"></span></h2><div class="form" id="sc-props"></div>
+        <div class="row"><button class="btn" id="sc-up">위로</button><button class="btn" id="sc-down">아래로</button><button class="btn warn" id="sc-del">지우기</button></div></div>
+      <div class="box"><h2>코드 <span id="sc-codeSize"></span></h2>
+        <div class="row"><button class="btn pri" id="sc-dl">screens.h 받기</button><button class="btn" id="sc-copy">코드 복사</button><span class="note" id="sc-codeMsg"></span></div>
+        <pre id="sc-code"></pre>
+      </div>
+      <div class="box"><h2>ESP32에서 쓰는 법</h2>
+        <ol class="steps">
+          <li>Arduino IDE 라이브러리 관리에서 <b>Adafruit ST7735 and ST7789</b>과 <b>Adafruit GFX</b>를 설치합니다.</li>
+          <li>받은 <span class="kbd">screens.h</span>를 스케치 폴더에 넣고 맨 위에 <span class="kbd">#include "screens.h"</span>.</li>
+          <li><span class="kbd">setup()</span>에서 <span class="kbd">screenInit();</span> 한 번, 바꿀 때 <span class="kbd">draw_idle();</span>처럼 화면 함수를 부릅니다. 함수 이름은 화면 탭 옆 「코드 이름」에 나옵니다.</li>
+          <li>숫자·영문 값 요소는 코드의 변수 이름(예: <span class="kbd">distL</span>)을 그대로 씁니다. 스케치에 그 변수가 있어야 합니다.</li>
+        </ol>
+        <div class="note">핀: SCL 18 · SDA 23 · CS 5 · DC 16 · RES 17 (배선표와 같음). GPIO19는 팬이라 SPI의 MISO로 쓰지 않도록 코드에서 막아 두었습니다. 한글은 1비트 그림으로 바뀌므로 20px 이상을 권합니다.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
     </div>
   </div>
 </div>
 <script src="data.js"></script>
+<script>
+
+(()=>{
+const $=s=>document.querySelector(s);
+const W=240,H=320;
+const uid=()=>'s'+Math.random().toString(36).slice(2,8);
+const T=(text,x,y,size,color,align='center',weight=700)=>({id:uid(),k:'text',text,x,y,size,color,align,weight});
+const Rr=(x,y,w,h,color,r=0,fill=true)=>({id:uid(),k:'rect',x,y,w,h,color,r,fill});
+const Ln=(x,y,w,color,t=2)=>({id:uid(),k:'line',x,y,w,color,t});
+const Vv=(expr,x,y,size,color,label='')=>({id:uid(),k:'var',expr,x,y,size,color,label});
+const BLUE='#1f5eff',WHITE='#ffffff',GRAY='#c9ced6';
+const DEFAULT=[
+ {id:'idle',name:'대기',bg:'#000000',rot:0,when:'두 구멍이 비어 있을 때',els:[Rr(0,0,240,6,BLUE),T('우산을',120,70,34,WHITE),T('넣어 주세요',120,114,34,WHITE),Ln(24,170,192,BLUE),T('L 비어 있음',120,206,22,GRAY,'center',500),T('R 비어 있음',120,244,22,GRAY,'center',500)]},
+ {id:'store',name:'보관',bg:'#000000',rot:0,when:'우산을 넣은 뒤 (팬 도는 동안)',els:[Rr(0,0,240,6,BLUE),T('보관 중',120,70,34,WHITE),T('말리는 중',120,114,34,WHITE),Ln(24,170,192,BLUE),T('팬 10분',120,206,22,GRAY,'center',500),Vv('distL',60,250,2,GRAY,'L 거리(mm)')]},
+ {id:'lift',name:'꺼내기',bg:'#000000',rot:0,when:'사람이 다가와 받침을 올릴 때',els:[Rr(0,0,240,6,BLUE),T('우산을',120,70,34,WHITE),T('꺼내세요',120,114,34,BLUE),Ln(24,170,192,BLUE),T('받침이 올라옵니다',120,206,22,GRAY,'center',500),T('손을 조심하세요',120,244,22,GRAY,'center',500)]},
+ {id:'bye',name:'감사',bg:'#000000',rot:0,when:'우산을 꺼낸 뒤 몇 초',els:[Rr(0,0,240,6,BLUE),T('좋은 하루',120,96,34,WHITE),T('되세요',120,140,34,WHITE)]},
+ {id:'wait',name:'잠시대기',bg:'#000000',rot:0,when:'모터를 많이 써서 쉬는 중',els:[Rr(0,0,240,6,'#f5c400'),T('잠시',120,96,34,WHITE),T('기다려 주세요',120,140,30,WHITE),T('모터 식히는 중',120,206,20,GRAY,'center',500)]},
+ {id:'err',name:'센서확인',bg:'#000000',rot:0,when:'초음파 값이 계속 −1일 때',els:[Rr(0,0,240,6,'#ff3b30'),T('센서를',120,96,34,WHITE),T('확인해 주세요',120,140,30,WHITE),T('이 구멍은 쉬는 중',120,206,20,GRAY,'center',500)]},
+];
+let screens=JSON.parse(JSON.stringify(DEFAULT)),cur=0,sel=null;
+const scr=()=>screens[cur];
+
+// ---------- 글자 → 1비트 그림 (미리보기와 코드가 같은 그림) ----------
+const fontStr=e=>`${e.weight||700} ${e.size}px "Gmarket Sans","Apple SD Gothic Neo",sans-serif`;
+const bmpCache=new Map();
+function textBitmap(e){
+  const key=[e.text,e.size,e.weight].join('|');if(bmpCache.has(key))return bmpCache.get(key);
+  const c=document.createElement('canvas'),g=c.getContext('2d');g.font=fontStr(e);
+  const m=g.measureText(e.text||' ');const w=Math.max(1,Math.ceil(m.width)+2),asc=Math.ceil(e.size*0.95),h=Math.ceil(e.size*1.25);
+  c.width=w;c.height=h;g.font=fontStr(e);g.fillStyle='#fff';g.textBaseline='alphabetic';g.fillText(e.text||'',1,asc);
+  const d=g.getImageData(0,0,w,h).data;let x0=w,x1=-1,y0=h,y1=-1;const on=new Uint8Array(w*h);
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){if(d[(y*w+x)*4+3]>110){on[y*w+x]=1;if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}}
+  let r;if(x1<0)r={w:1,h:1,dx:0,dy:0,on:new Uint8Array(1),bytes:[0]};
+  else{const bw=x1-x0+1,bh=y1-y0+1,o=new Uint8Array(bw*bh),bpr=(bw+7)>>3,bytes=new Array(bpr*bh).fill(0);
+    for(let y=0;y<bh;y++)for(let x=0;x<bw;x++)if(on[(y+y0)*w+x+x0]){o[y*bw+x]=1;bytes[y*bpr+(x>>3)]|=0x80>>(x&7)}
+    r={w:bw,h:bh,dx:x0-1,dy:y0-asc,on:o,bytes}}
+  bmpCache.set(key,r);return r}
+function textBox(e){const b=textBitmap(e);const ox=e.align==='center'?Math.round(e.x-b.w/2):e.align==='right'?e.x-b.w:e.x;return {x:ox,y:Math.round(e.y+b.dy),w:b.w,h:b.h,b}}
+const VW=e=>6*e.size*Math.max(1,(e.label?'':'')+String(sample(e)).length), VH=e=>8*e.size;
+const sample=e=>({distL:'123',distR:'98',pir:'1',sec:'42'}[e.expr]??'0');
+
+// ---------- 그리기 ----------
+const cv=$('#sc-cv'),g=cv.getContext('2d');
+function draw(){window.dispatchEvent(new Event('screens-changed'));const s=scr();g.fillStyle=s.bg;g.fillRect(0,0,W,H);
+  for(const e of s.els){g.fillStyle=e.color;g.strokeStyle=e.color;
+    if(e.k==='rect'){if(e.fill){if(e.r){rr(e.x,e.y,e.w,e.h,e.r);g.fill()}else g.fillRect(e.x,e.y,e.w,e.h)}else{g.lineWidth=1;if(e.r){rr(e.x+.5,e.y+.5,e.w-1,e.h-1,e.r);g.stroke()}else g.strokeRect(e.x+.5,e.y+.5,e.w-1,e.h-1)}}
+    else if(e.k==='line')g.fillRect(e.x,e.y,e.w,e.t);
+    else if(e.k==='text'){const bx=textBox(e);const im=g.createImageData(bx.w,bx.h);const c=hex(e.color);
+      for(let i=0;i<bx.b.on.length;i++)if(bx.b.on[i]){im.data[i*4]=c[0];im.data[i*4+1]=c[1];im.data[i*4+2]=c[2];im.data[i*4+3]=255}
+      const tmp=document.createElement('canvas');tmp.width=bx.w;tmp.height=bx.h;tmp.getContext('2d').putImageData(im,0,0);g.drawImage(tmp,bx.x,bx.y)}
+    else if(e.k==='var'){g.font=`${8*e.size}px monospace`;g.textBaseline='top';g.fillText(sample(e),e.x,e.y)}}
+  const e=s.els.find(x=>x.id===sel);if(e){const b=bbox(e);g.save();g.strokeStyle='#1f5eff';g.setLineDash([3,2]);g.lineWidth=1;g.strokeRect(b.x-1.5,b.y-1.5,b.w+3,b.h+3);g.restore()}}
+function rr(x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+const hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+const c565=h=>{const [r,gg,b]=hex(h);return '0x'+(((r&0xF8)<<8)|((gg&0xFC)<<3)|(b>>3)).toString(16).toUpperCase().padStart(4,'0')};
+function bbox(e){if(e.k==='text'){const b=textBox(e);return {x:b.x,y:b.y,w:b.w,h:b.h}}if(e.k==='line')return {x:e.x,y:e.y,w:e.w,h:e.t};if(e.k==='var')return {x:e.x,y:e.y,w:6*e.size*String(sample(e)).length,h:8*e.size};return {x:e.x,y:e.y,w:e.w,h:e.h}}
+
+// ---------- 목록·속성 ----------
+const KN={text:'한글 글자',rect:'사각형',line:'가로선',var:'값'};
+function renderAll(){if(!cv.isConnected)return;
+  $('#sc-tabs').innerHTML=screens.map((s,i)=>`<button data-i="${i}" aria-pressed="${i===cur}">${esc(s.name)}</button>`).join('');
+  const s=scr();$('#sc-sName').value=s.name;$('#sc-sBg').value=s.bg;$('#sc-sRot').value=String(s.rot||0);$('#sc-sWhen').value=s.when||'';$('#sc-scrInfo').textContent=`${cur+1} / ${screens.length} · 코드 이름 ${fn(s)}()`;
+  $('#sc-els').innerHTML=s.els.map(e=>`<button data-id="${e.id}" aria-pressed="${e.id===sel}"><span class="k">${KN[e.k]}</span><span class="v">${esc(e.k==='text'?e.text:e.k==='var'?(e.label||e.expr):`${e.x},${e.y} ${e.w||''}×${e.h||e.t||''}`)}</span></button>`).join('')||'<div class="note">요소가 없습니다. 아래 버튼으로 추가하세요.</div>';
+  renderProps();draw();renderCode()}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function renderProps(){const e=scr().els.find(x=>x.id===sel);$('#sc-propBox').hidden=!e;if(!e)return;$('#sc-propKind').textContent=KN[e.k];
+  const f=[];const num=(k,l,min,max,cls='')=>f.push(`<label class="${cls}">${l}<input type="number" data-p="${k}" value="${e[k]}" min="${min}" max="${max}"></label>`);
+  if(e.k==='text'){f.push(`<label class="w4">글자<input data-p="text" value="${esc(e.text)}" maxlength="24"></label>`);num('x','가로 위치',0,240);num('y','세로 위치 (글자 바닥)',0,320);num('size','크기 px',12,72);
+    f.push(`<label>굵기<select data-p="weight"><option value="700"${e.weight==700?' selected':''}>굵게</option><option value="500"${e.weight==500?' selected':''}>보통</option></select></label>`);
+    f.push(`<label class="w2">정렬<select data-p="align">${['left','center','right'].map(a=>`<option value="${a}"${e.align===a?' selected':''}>${{left:'왼쪽 기준',center:'가운데 기준',right:'오른쪽 기준'}[a]}</option>`).join('')}</select></label>`)}
+  else if(e.k==='rect'){num('x','x',0,240);num('y','y',0,320);num('w','너비',1,240);num('h','높이',1,320);num('r','모서리',0,40);f.push(`<label>채우기<select data-p="fill"><option value="1"${e.fill?' selected':''}>채움</option><option value="0"${!e.fill?' selected':''}>테두리만</option></select></label>`)}
+  else if(e.k==='line'){num('x','x',0,240);num('y','y',0,320);num('w','길이',1,240);num('t','두께',1,12)}
+  else{f.push(`<label class="w2">변수 이름 (코드)<input data-p="expr" value="${esc(e.expr)}" maxlength="32"></label><label class="w2">설명<input data-p="label" value="${esc(e.label)}" maxlength="24"></label>`);num('x','x',0,240);num('y','y',0,320);num('size','배율 (1=6×8)',1,6)}
+  f.push(`<label>색<input type="color" data-p="color" value="${e.color}"></label>`);
+  $('#sc-props').innerHTML=f.join('')}
+$('#sc-props').addEventListener('input',ev=>{const k=ev.target.dataset.p;if(!k)return;const e=scr().els.find(x=>x.id===sel);let v=ev.target.value;
+  if(ev.target.type==='number')v=Math.round(+v||0);if(k==='fill')v=v==='1';if(k==='weight')v=+v;if(k==='expr')v=v.replace(/[^A-Za-z0-9_\[\]\.]/g,'');e[k]=v;draw();renderCode();lightList();save()});
+function lightList(){const s=scr();$('#sc-els').querySelectorAll('button').forEach(b=>{const e=s.els.find(x=>x.id===b.dataset.id);if(e)b.querySelector('.v').textContent=e.k==='text'?e.text:e.k==='var'?(e.label||e.expr):`${e.x},${e.y} ${e.w||''}×${e.h||e.t||''}`})}
+$('#sc-els').addEventListener('click',ev=>{const b=ev.target.closest('button[data-id]');if(!b)return;sel=b.dataset.id;renderAll()});
+$('#sc-tabs').addEventListener('click',ev=>{const b=ev.target.closest('button[data-i]');if(!b)return;cur=+b.dataset.i;sel=null;renderAll()});
+document.querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.add;const e=k==='text'?T('새 글자',120,160,28,WHITE):k==='rect'?Rr(40,140,160,40,BLUE,6):k==='line'?Ln(24,180,192,BLUE):Vv('distL',20,280,2,WHITE,'값');scr().els.push(e);sel=e.id;renderAll();save()}));
+$('#sc-del').addEventListener('click',()=>{const s=scr();s.els=s.els.filter(e=>e.id!==sel);sel=null;renderAll();save()});
+const move=d=>{const s=scr(),i=s.els.findIndex(e=>e.id===sel),j=i+d;if(i<0||j<0||j>=s.els.length)return;[s.els[i],s.els[j]]=[s.els[j],s.els[i]];renderAll();save()};
+$('#sc-up').addEventListener('click',()=>move(1));$('#sc-down').addEventListener('click',()=>move(-1));
+for(const [id,k] of [['sName','name'],['sBg','bg'],['sRot','rot'],['sWhen','when']])$('#sc-'+id).addEventListener('input',ev=>{let v=ev.target.value;if(k==='rot')v=+v;if(k==='name')v=v.replace(/[^가-힣A-Za-z0-9_]/g,'')||'화면';scr()[k]=v;if(k==='name')$('#sc-tabs').children[cur].textContent=v;draw();renderCode();save()});
+$('#sc-newScr').addEventListener('click',()=>{screens.push({id:uid(),name:'새화면'+(screens.length+1),bg:'#000000',rot:0,when:'',els:[Rr(0,0,240,6,BLUE)]});cur=screens.length-1;sel=null;renderAll();save()});
+$('#sc-dupScr').addEventListener('click',()=>{const c=JSON.parse(JSON.stringify(scr()));c.id=uid();c.name+='2';c.els.forEach(e=>e.id=uid());screens.splice(cur+1,0,c);cur++;sel=null;renderAll();save()});
+let delArm=0;$('#sc-delScr').addEventListener('click',ev=>{if(screens.length<2)return;if(Date.now()-delArm>3000){delArm=Date.now();ev.target.textContent='한 번 더 누르면 지움';setTimeout(()=>ev.target.textContent='화면 지우기',3000);return}
+  const gone=screens.splice(cur,1)[0];cur=Math.max(0,cur-1);sel=null;ev.target.textContent='화면 지우기';renderAll();save(gone.id)});
+
+// ---------- 끌어 옮기기 ----------
+let drag=null;
+const pos=ev=>{const r=cv.getBoundingClientRect();return [(ev.clientX-r.left)/r.width*W,(ev.clientY-r.top)/r.height*H]};
+cv.addEventListener('pointerdown',ev=>{const [x,y]=pos(ev);const s=scr();let hit=null;for(let i=s.els.length-1;i>=0;i--){const b=bbox(s.els[i]);if(x>=b.x-2&&x<=b.x+b.w+2&&y>=b.y-2&&y<=b.y+b.h+2){hit=s.els[i];break}}
+  sel=hit?.id||null;if(hit){drag={e:hit,sx:x,sy:y,ox:hit.x,oy:hit.y};cv.setPointerCapture(ev.pointerId)}renderAll()});
+cv.addEventListener('pointermove',ev=>{if(!drag)return;const [x,y]=pos(ev);drag.e.x=Math.round((drag.ox+x-drag.sx)/2)*2;drag.e.y=Math.round((drag.oy+y-drag.sy)/2)*2;draw()});
+cv.addEventListener('pointerup',()=>{if(drag){drag=null;renderProps();renderCode();lightList();save()}});
+
+// ---------- 코드 만들기 ----------
+const fn=s=>'draw_'+s.id;
+let codeText='';
+function renderCode(){
+  const L=[];let bytes=0;
+  L.push('// 우산통 화면 — 「우산통 화면 편집기」에서 만든 코드. 직접 고치지 말고 편집기에서 다시 받으세요.');
+  L.push('#pragma once','#include <SPI.h>','#include <Adafruit_GFX.h>','#include <Adafruit_ST7789.h>','');
+  L.push('#define TFT_SCLK 18','#define TFT_MOSI 23','#define TFT_CS   5','#define TFT_DC   16','#define TFT_RST  17','');
+  L.push('Adafruit_ST7789 tft(&SPI, TFT_CS, TFT_DC, TFT_RST);','');
+  for(const s of screens)s.els.forEach((e,i)=>{if(e.k!=='text')return;const b=textBitmap(e);bytes+=b.bytes.length;
+    L.push(`// ${s.name}: "${e.text}" ${b.w}×${b.h}`);
+    const hx=b.bytes.map(v=>'0x'+v.toString(16).padStart(2,'0'));const rows=[];for(let k=0;k<hx.length;k+=16)rows.push('  '+hx.slice(k,k+16).join(','));
+    L.push(`static const uint8_t bmp_${s.id}_${i}[] PROGMEM = {`,rows.join(',\n'),'};')});
+  L.push('','void screenInit() {','  SPI.begin(TFT_SCLK, 39, TFT_MOSI, -1);  // MISO는 GPIO39(입력 전용). GPIO19는 팬이라 쓰지 않음','  tft.init(240, 320);',`  tft.setRotation(${screens[0].rot||0});`,'}','');
+  for(const s of screens){L.push(`// ${s.when||''}`,`void ${fn(s)}() {`);if(s.rot)L.push(`  tft.setRotation(${s.rot});`);L.push(`  tft.fillScreen(${c565(s.bg)});`);
+    s.els.forEach((e,i)=>{const c=c565(e.color);
+      if(e.k==='rect')L.push(e.fill?(e.r?`  tft.fillRoundRect(${e.x}, ${e.y}, ${e.w}, ${e.h}, ${e.r}, ${c});`:`  tft.fillRect(${e.x}, ${e.y}, ${e.w}, ${e.h}, ${c});`):(e.r?`  tft.drawRoundRect(${e.x}, ${e.y}, ${e.w}, ${e.h}, ${e.r}, ${c});`:`  tft.drawRect(${e.x}, ${e.y}, ${e.w}, ${e.h}, ${c});`));
+      else if(e.k==='line')L.push(`  tft.fillRect(${e.x}, ${e.y}, ${e.w}, ${e.t}, ${c});`);
+      else if(e.k==='text'){const b=textBox(e);L.push(`  tft.drawBitmap(${b.x}, ${b.y}, bmp_${s.id}_${i}, ${b.w}, ${b.h}, ${c});  // ${e.text}`)}
+      else L.push(`  tft.setTextSize(${e.size}); tft.setTextColor(${c}, ${c565(s.bg)}); tft.setCursor(${e.x}, ${e.y}); tft.print(${e.expr});  // ${e.label||''}`)});
+    L.push('}','')}
+  codeText=L.join('\n');$('#sc-code').textContent=codeText;$('#sc-codeSize').textContent=`한글 그림 ${(bytes/1024).toFixed(1)} KB · 화면 ${screens.length}개`}
+$('#sc-copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(codeText);$('#sc-codeMsg').textContent='복사했습니다.'}catch(e){const r=document.createRange();r.selectNodeContents($('#sc-code'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('#sc-codeMsg').textContent='코드를 선택해 두었습니다. 복사하세요.'}});
+let dlc=null,dlt=false;
+$('#sc-dl').addEventListener('click',async()=>{const m=$('#sc-codeMsg');
+  if(!dlt){dlt=true;try{dlc=await window.claude?.use?.('downloads')}catch(e){dlc=null}}
+  const blob=new Blob([codeText],{type:'text/plain'});
+  try{if(dlc){await dlc.save({filename:'screens.h',data:blob});m.textContent='저장했습니다.'}
+    else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='screens.h';document.body.appendChild(a);a.click();a.remove();m.textContent='내려받기를 시작했습니다.'}}
+  catch(e){m.textContent=e.code==='declined'?'취소했습니다.':'받지 못했습니다. 「코드 복사」를 써 주세요.'}});
+
+// ---------- 저장 (db: screens/<id>, 기기끼리 공유) ----------
+let db=null,saveT=null,dirty=new Set(),removed=new Set();
+function save(goneId){if(goneId)removed.add(goneId);dirty.add(scr()?.id);clearTimeout(saveT);saveT=setTimeout(flush,600)}
+async function flush(){
+  const order=screens.map(s=>s.id);
+  if(!db){try{localStorage.setItem('screens',JSON.stringify(screens))}catch(e){}return}
+  try{for(const id of removed){await db.doc('screens/'+id).delete()}removed.clear();
+    for(const s of screens)if(dirty.has(s.id)||true){await db.doc('screens/'+s.id).set({order:order.indexOf(s.id),json:JSON.stringify(s),updatedAt:new Date().toISOString()})}
+    dirty.clear();$('#sc-saveNote').textContent='저장했습니다. 다른 기기에서 열어도 같습니다.'}
+  catch(e){$('#sc-saveNote').textContent='저장하지 못했습니다: '+(e.code==='not_granted'?'저장 권한이 없습니다':e.message||e.code)}}
+(async()=>{
+  try{await document.fonts.load('700 34px "Gmarket Sans"');await document.fonts.load('500 22px "Gmarket Sans"')}catch(e){}
+  bmpCache.clear();
+  try{db=await window.claude?.use?.('db')}catch(e){db=null}
+  if(db){try{const snap=await db.collection('screens').get();const rows=snap.docs.map(d=>d.data()).filter(r=>r&&r.json).sort((a,b)=>a.order-b.order);
+      if(rows.length)screens=rows.map(r=>JSON.parse(r.json));$('#sc-saveNote').textContent=rows.length?'저장된 화면을 불러왔습니다.':'기본 화면 6개로 시작합니다. 고치면 자동 저장됩니다.'}
+    catch(e){$('#sc-saveNote').textContent='저장된 화면을 읽지 못했습니다: '+(e.message||e.code)}}
+  else{try{const v=JSON.parse(localStorage.getItem('screens')||'null');if(Array.isArray(v)&&v.length)screens=v}catch(e){}$('#sc-saveNote').textContent='이 화면에서는 이 기기에만 저장됩니다. claude.ai에서 열면 기기끼리 공유됩니다.'}
+  renderAll()})();
+renderAll();
+window.scrRender=(id,canvas)=>{const i=screens.findIndex(s=>s.id===id);if(i<0)return false;const keep=[cur,sel];cur=i;sel=null;draw();canvas.getContext('2d').drawImage(cv,0,0,canvas.width,canvas.height);[cur,sel]=keep;draw();return true};
+window.dispatchEvent(new Event('screens-ready'));
+})();
+
+</script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -460,15 +697,15 @@ function rerender(){({print:renderPrint,bench:renderBench,asm:renderAsm,wire:ren
 // ================= 탭 =================
 let mode='print';
 function setMode(m){mode=m;document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.t===m)));
-  ['print','bench','asm','wire','anim','test'].forEach(k=>$('#v-'+k).hidden=k!==m);
+  ['print','bench','asm','wire','anim','test','screen'].forEach(k=>$('#v-'+k).hidden=k!==m);$('.main').classList.toggle('full',m==='screen');if(m==='screen')requestAnimationFrame(()=>window.dispatchEvent(new Event('resize')));
   $('#tIso').hidden=!(m==='print'&&focus);$('#tAll').hidden=m!=='wire';
   $('#tShell').setAttribute('aria-pressed',String(m==='wire'));$('#tCover').setAttribute('aria-pressed',String(m==='wire'||m==='anim'));
   $('#tShell').hidden=$('#tCover').hidden=m==='bench';
   $('#cap3d').hidden=m!=='anim';
-  $('#hint').textContent={print:'부품을 누르면 사진·크기·기능이 나옵니다',bench:'몸통에 넣기 전, 책상 위에서 먼저 연결합니다',asm:'파란 부품이 이 단계에 들어가는 것입니다',wire:'전선을 누르면 파랗게 빛나며 번호가 나옵니다',anim:'우산을 넣고 꺼내는 실제 순서입니다',test:'시험은 완성한 몸통에서 합니다'}[m];
+  $('#hint').textContent={print:'부품을 누르면 사진·크기·기능이 나옵니다',bench:'몸통에 넣기 전, 책상 위에서 먼저 연결합니다',asm:'파란 부품이 이 단계에 들어가는 것입니다',wire:'전선을 누르면 파랗게 빛나며 번호가 나옵니다',anim:'우산을 넣고 꺼내는 실제 순서입니다',test:'시험은 완성한 몸통에서 합니다',screen:''}[m];
   if(playAsm&&m!=='asm'){clearInterval(playAsm);playAsm=null}
   wSel=null;clearHalo();ENT.forEach(e=>e.set([0,0,0]));ins=null;$('#info').hidden=true;focusInst=null;infoFor=null;selText=false;rerender();paint();
-  if(ready){if(m==='bench')fitBench();else if(m==='asm')fitVisible();else if(m==='anim')fitAnim();else if(m==='wire')view('back');else view('iso')}
+  if(ready)requestAnimationFrame(()=>{size();if(m==='bench')fitBench();else if(m==='asm')fitVisible();else if(m==='anim')fitAnim();else if(m==='wire')view('back');else if(m!=='screen')view('iso')});
   if(location.hash.slice(1)!==m)history.replaceState(null,'','#'+m);LS.set('tab',m)}
 document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.t)));
 
@@ -782,7 +1019,7 @@ function setupAnim(){
   drawLCD('idle');
 }
 let lcdState='';
-function drawLCD(st){if(!AN.cv)return;const mini=$('#lcdMini');if(st===lcdState&&!(mini&&!mini.dataset.on))return;lcdState=st;const c=AN.cv.getContext('2d');
+function drawLCD(st){if(!AN.cv)return;const sid={idle:'idle',in:'store',up:'lift',bye:'bye'}[st];if(window.scrRender&&st!==lcdState){const c=AN.cv.getContext('2d');c.clearRect(0,0,240,320);if(window.scrRender(sid,AN.cv)){lcdState=st;AN.tex.needsUpdate=true;const mini=$('#lcdMini');if(mini)mini.getContext('2d').drawImage(AN.cv,0,0);return}}const mini=$('#lcdMini');if(st===lcdState&&!(mini&&!mini.dataset.on))return;lcdState=st;const c=AN.cv.getContext('2d');
   const F=(w,s)=>`${w} ${s}px "Gmarket Sans","Apple SD Gothic Neo",sans-serif`;
   c.fillStyle='#000';c.fillRect(0,0,240,320);c.fillStyle='#1f5eff';c.fillRect(0,0,240,6);
   const S={idle:['우산을','넣어 주세요','L 비어 있음','R 비어 있음'],in:['L 보관 중','말리는 중','팬 10분','R 비어 있음'],up:['우산을','꺼내세요','L 올라옴','손을 조심'],bye:['좋은 하루','되세요','L 비어 있음','R 비어 있음']}[st];
@@ -809,7 +1046,8 @@ function animFrame(dt){
 let lastT=performance.now();
 renderer.setAnimationLoop(now=>{const dt=Math.min(.1,(now-lastT)/1000);lastT=now;tickInsert(now);animFrame(dt);ctl.update();renderer.render(scene,cam)});
 
+window.addEventListener('screens-ready',()=>{lcdState=''});
 renderPrint();
-const h0=location.hash.slice(1);setMode(['print','bench','asm','wire','anim','test'].includes(h0)?h0:LS.get('tab','print'));
+const h0=location.hash.slice(1);setMode(['print','bench','asm','wire','anim','test','screen'].includes(h0)?h0:LS.get('tab','print'));
 </script>
 </body></html>
