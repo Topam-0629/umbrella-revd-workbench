@@ -17,7 +17,7 @@
 :root[data-theme="dark"]{
   --bg:#0b0c0e; --fg:#f1f2f4; --sub:#9a9ea7; --line:#25282d; --soft:#15171a;
   --accent:#5b8cff; --accent-soft:#141f3a; --on-accent:#0b0c0e; --warn:#ff6b6b; --paper:#ffffff; color-scheme:dark}
-html,body{height:100%}
+html{height:100%;box-sizing:border-box;overflow:hidden}body{height:100%;overscroll-behavior:none}
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--fg);font-family:var(--font);font-weight:500;font-size:14px;line-height:1.55;overflow:hidden}
 button,textarea{font:inherit;color:inherit}
@@ -102,6 +102,8 @@ h2.t{margin:0;font-size:22px;line-height:1.3;font-weight:700;letter-spacing:-.01
 .ck .sm{display:block;font-size:12px;color:var(--sub)}
 .ck.on,.item.on{background:var(--accent-soft)}
 .item{border-bottom:1px solid var(--line)}.item .ck{border-bottom:0}.item .find{margin:0 0 10px 32px}
+.tg{display:inline-block;font-family:var(--mono);font-size:11.5px;color:var(--fg);border:1px solid var(--fg);border-left:4px solid var(--accent);padding:0 5px;margin:2px 4px 0 0;border-radius:2px}
+.plan svg{display:block;min-width:720px;width:100%;height:auto;background:#fff}
 .cmds{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .kbd{font-family:var(--mono);font-weight:700;font-size:13px;border:1px solid var(--fg);border-bottom-width:2px;padding:1px 7px;border-radius:3px}
 .paper{background:var(--paper);border:1px solid var(--line);overflow-x:auto;padding:8px}
@@ -447,7 +449,7 @@ const P=[
  {g:'덮개·기타',id:'COVER_LOW',nm:'뒤 덮개 아래',h:2.89,w:87,ly:'0.24',sup:'없음',brim:'귀 2~3 mm',m:['F_COVER_LOW'],tip:'폭 244 mm. 브림을 넓히면 베드를 넘습니다.'},
  {g:'덮개·기타',id:'COVER_UP',nm:'뒤 덮개 위',h:2.82,w:85,ly:'0.24',sup:'없음',brim:'귀 2~3 mm',m:['F_COVER_UP'],tip:''},
  {g:'덮개·기타',id:'SPLICE_x6',nm:'좌우 이음판 6개',h:0.21,w:5,ly:'0.24',sup:'없음',brim:'없음',m:['F_SPLICE'],tip:'채움 100 %. 5개 사용, 1개 예비.'},
- {g:'시험',id:'COUPON',nm:'시험 조각 (한 판)',h:4.09,w:117,ly:'0.20',sup:'없음',brim:'5 mm',m:[],tip:'본 출력 전에 끼움을 시험하는 조각. 3D 조립에는 없습니다.'},
+ {g:'시험',id:'COUPON',nm:'시험 조각 (필수 7개 한 판)',h:2.0,w:50,ly:'0.20',sup:'없음',brim:'5 mm',m:[],tip:'본 출력 전에 꼭 볼 것만: T1+T3 받침 통과 · T4 인서트(홈 1/2/3개=3.6/3.7/3.8)·볼트 3.4·셀프탭 2.8 · T5 혀 맞물림 · T6 전자판 홈 · T7 액추에이터 고리 · T15 가로 구멍. 시간·무게는 예상값. 고른 인서트 크기를 메모로 남겨 주세요.'},
 ];
 const PFN={LOWER:'팬 레일·물받이 창·액추에이터 아래 고정부가 있는 아래 몸통입니다.',UPPER:'윗판(우산 구멍 2개), 센서 창, 화면 창이 있는 위 몸통입니다.',CARRIAGE:'우산이 올라앉는 받침입니다. 액추에이터가 밀어 올리고 내립니다.',TRAY:'우산에서 떨어진 빗물을 받는 서랍입니다.',CRADLE:'초음파 센서를 구멍 쪽으로 잡아 주는 받침입니다.',DISP:'윗면에 화면을 끼우는 틀입니다.',BEZEL:'사람 감지 센서와 스피커를 다는 앞판입니다.',PLATE_LOW:'전원·팬·소리 모듈을 붙이는 아래 판입니다.',PLATE_UP:'ESP32·모터 드라이버를 붙이는 위 판입니다.',COVER:'뒤 덮개입니다. 배선을 볼 때 엽니다.',SPLICE:'좌우 반쪽을 볼트로 잇는 작은 판입니다.'};
 const ORDER=['몸통','움직이는 부분','센서·화면','전자부','덮개·기타','시험'];
@@ -560,7 +562,7 @@ const wireStep={};D.wsteps.forEach(s=>s.wires.forEach(n=>wireStep[String(n)]=s.n
 const CN={'빨강':'#d7263d','검정':'#202124','주황':'#f28c28','분홍':'#e86aa6','보라':'#7b5cff','파랑':'#1f5eff','초록':'#2f9e44','노랑':'#f5c400','갈색':'#8b5a2b','하양':'#f4f4f4','회색':'#9aa0a6'};
 const swatch=c=>{const cs=String(c).split(/[\/ ]/).map(x=>CN[x]).filter(Boolean);return cs.length?`<span class="sw" style="background:linear-gradient(90deg,${cs.map((x,i)=>`${x} ${i/cs.length*100}% ${(i+1)/cs.length*100}%`).join(',')})"></span>`:''};
 function table(head,rows,mono=[]){return `<div class="tbl"><table><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td class="${mono.includes(i)?'m':''}">${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}
-const wireItem=n=>{const w=WIRE[String(n)];return {k:'wn-'+n,n:String(n),h:`<span class="wn">${n}</span>${swatch(w[5])}${esc(w[1])} → ${esc(w[2])}<span class="sm">${w[3]} · ${esc(w[4])} cm · ${esc(w[5])}</span>`}};
+const wireItem=n=>{const w=WIRE[String(n)];const tg=typeof tagsOf==='function'?tagsOf(n):[];return {k:'wn-'+n,n:String(n),h:`<span class="wn">${n}</span>${swatch(w[5])}${esc(w[1])} → ${esc(w[2])}<span class="sm">${w[3]} · ${esc(w[4])} cm · ${esc(w[5])}</span>${tg.length?`<span class="sm">꼬리표: ${tg.map(t=>`<b class="tg">${esc(t)}</b>`).join(' ')}</span>`:''}`}};
 function ticks(n,cur,doneFn){let h='<div class="ticks">';for(let i=1;i<=n;i++)h+=`<button data-s="${i}" class="${doneFn(i)?'d':''}${i===cur?' c':''}" aria-label="${i}단계">${i}</button>`;return h+'</div>'}
 const itemsHtml=items=>`<div class="list">${items.map(x=>`<div class="item${x.n&&String(wSel)===x.n?' on':''}"><button class="ck" data-k="${x.k}" aria-pressed="${!!checks[x.k]}"><span class="bx">${checks[x.k]?'✓':''}</span><span class="tx">${x.h}</span></button>${x.n?`<button class="btn find" data-w="${x.n}">${String(wSel)===x.n?'강조 끄기':'3D에서 찾기'}</button>`:''}</div>`).join('')}</div>`;
 
@@ -590,8 +592,10 @@ function renderBench(){
   <h2 class="t">${esc(s.t)}</h2>
   <div class="desc">${esc(s.d)}</div>
   ${s.k?`<div class="cmds"><span class="note">시리얼 모니터에 입력:</span>${s.k.map(k=>`<span class="kbd">${k}</span>`).join('')}</div>`:''}
+  <div class="sub">평면도 — 이 단계</div>${planSVG(s.w)}
   ${itemsHtml(items)}
   ${memoBox('b-'+bCur,'이 단계')}
+  ${bCur===1?tagTable():''}
   <details><summary>전체 구조도 (평면)</summary><div class="paper">${D.diag.overview}</div></details>`;
 }
 $('#v-bench').addEventListener('click',e=>stepClick(e,'bench'));
@@ -631,8 +635,10 @@ function renderWire(){
   <h2 class="t">${esc(s.t)}</h2>
   ${s.p?`<div class="desc">${s.p}</div>`:''}
   <div class="note">3D에서 이 단계 전선은 진하게, 앞 단계 전선은 흐리게 보입니다. 전선을 누르면 파랗게 빛나며 번호가 나옵니다. 3D 경로는 대략의 위치이고, 실제 길이는 전선 목록을 따릅니다.</div>
+  <div class="sub">평면도 — 이 단계 (책상 배치 기준)</div>${planSVG(ws)}
   ${itemsHtml(items)}
-  ${memoBox('w-'+wCur,'이 단계')}`;
+  ${memoBox('w-'+wCur,'이 단계')}
+  ${wCur===1?tagTable():''}`;
   if(wCur===1)h+=`<div class="sub">아래 전자판 — 모듈·WAGO 자리</div><div class="paper">${D.diag.plate_LOW}</div><div class="sub">위 전자판</div><div class="paper">${D.diag.plate_UP}</div>`;
   for(const d of s.diag)h+=`<div class="sub">연결도</div><div class="paper">${D.diag[d]}</div>`;
   if(s.tables.includes('WAGO'))h+=`<div class="sub">WAGO 칸 배정</div>`+table(['WAGO','종류','줄','칸 1','칸 2','칸 3','칸 4','칸 5'],D.wago.map(([n,k,net,ps])=>[n,k,net,...ps,...Array(5-ps.length).fill('')]),[0]);
@@ -648,7 +654,7 @@ function stepClick(e,kind){const b=e.target.closest('button');if(!b||b.closest('
   const max=kind==='wire'?9:BENCH.length;let c=kind==='wire'?wCur:bCur;
   if(b.dataset.s)c=+b.dataset.s;else if(b.dataset.a==='prev')c--;else if(b.dataset.a==='next')c++;else return;
   c=Math.max(1,Math.min(max,c));if(kind==='wire'){wCur=c;LS.set('wCur',c)}else{bCur=c;LS.set('bCur',c)}
-  wSel=null;clearHalo();rerender();paint();$('#panel').scrollTop=0}
+  wSel=null;clearHalo();rerender();paint();fitStep();$('#panel').scrollTop=0}
 
 // ================= 전원 시험 =================
 const tid=c=>c.replace(/[^A-Za-z0-9]/g,'p');
@@ -704,7 +710,7 @@ function setMode(m){mode=m;document.querySelectorAll('#tabs button').forEach(b=>
   $('#cap3d').hidden=m!=='anim';
   $('#hint').textContent={print:'부품을 누르면 사진·크기·기능이 나옵니다',bench:'몸통에 넣기 전, 책상 위에서 먼저 연결합니다',asm:'파란 부품이 이 단계에 들어가는 것입니다',wire:'전선을 누르면 파랗게 빛나며 번호가 나옵니다',anim:'우산을 넣고 꺼내는 실제 순서입니다',test:'시험은 완성한 몸통에서 합니다',screen:''}[m];
   if(playAsm&&m!=='asm'){clearInterval(playAsm);playAsm=null}
-  wSel=null;clearHalo();ENT.forEach(e=>e.set([0,0,0]));ins=null;$('#info').hidden=true;focusInst=null;infoFor=null;selText=false;rerender();paint();
+  wSel=null;clearHalo();ENT.forEach(e=>e.set([0,0,0]));ins=null;$('#info').hidden=true;focusInst=null;infoFor=null;selText=false;pinInst=null;rerender();paint();
   if(ready)requestAnimationFrame(()=>{size();if(m==='bench')fitBench();else if(m==='asm')fitVisible();else if(m==='anim')fitAnim();else if(m==='wire')view('back');else if(m!=='screen')view('iso')});
   if(location.hash.slice(1)!==m)history.replaceState(null,'','#'+m);LS.set('tab',m)}
 document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.t)));
@@ -770,14 +776,14 @@ function buildAsm(){
   inst('LCD','LCD',S,Mb([1,0,0],[0,1,0],[0.5,-0.5,348]),{key:'P_LCD'});
   inst('SPK','SPK',S,Mb([1,0,0],[0,0,1],[0,-31,324.5]),{key:'P_SPEAKER'});
   inst('FAN','FAN-L',S,Mb([0,1,0],[0,0,-1],[-17,0,100]),{key:'P_FAN_L'});inst('FAN','FAN-R',S,Mb([0,-1,0],[0,0,-1],[18,0,100]),{key:'P_FAN_R'});
-  inst('ACT','ACT-L',S,Mb([1,0,0],[0,1,0],[-91,60,15]),{key:'P_ACT_L'});inst('ACT','ACT-R',S,Mb([1,0,0],[0,1,0],[91,60,15]),{key:'P_ACT_R'});
+  inst('ACT','ACT-L',S,Mb([1,0,0],[0,1,0],[-91,60,17.5]),{key:'P_ACT_L'});inst('ACT','ACT-R',S,Mb([1,0,0],[0,1,0],[91,60,17.5]),{key:'P_ACT_R'});
   inst('TB','TB3',S,Mb([1,0,0],[0,0,-1],[-3,88,62]),{key:'P_TB_POWER'});inst('TB','TB1',S,Mb([1,0,0],[0,0,-1],[-3,88,160]),{key:'P_TB_SIGNAL'});inst('TB','TB2',S,Mb([1,0,0],[0,0,-1],[-3,88,310]),{key:'P_TB_UI'});
   for(const[n,x,z,k]of WAGOS_LOW)inst('WAGO'+k,n,S,Mb([-1,0,0],[0,-1,0],[x,97.15,z-4.2]),{key:'X_WAGO_LOW_'+n});
   for(const[n,x,z,k]of WAGOS_UP)inst('WAGO'+k,n,S,Mb([-1,0,0],[0,-1,0],[x,97.15,z-4.2]),{key:'X_WAGO_UP_'+n});
   inst('JACK','JACK',S,Mb([0,-1,0],[1,0,0],[0,95,33]),{key:'P_DCJACK'});
   inst('FUSE','F1',S,Mb([1,0,0],[0,1,0],[-40,120,24]),{key:'X_WIRES_F1'});inst('FUSE','F2',S,Mb([1,0,0],[0,1,0],[-37,150,135]),{key:'X_WIRES_F2'});
   for(const[n,x,y,z]of[['J1',-62,124,100],['J2',-14,124,112],['J3',34,122,344],['J4',50,122,344]])inst('WAGO2',n,S,Mb([1,0,0],[0,1,0],[x,y,z]),{key:'X_WIRES_'+n});
-  inst('UMB','UMB',S,Mb([1,0,0],[0,1,0],[-91,0,96]),{key:'Z_UMB'});
+  inst('UMB','UMB',S,Mb([1,0,0],[0,1,0],[-91,0,186.5]),{key:'Z_UMB'});
 }
 function buildBench(){
   const W=1000,H=720,mat=new THREE.Mesh(new THREE.PlaneGeometry(W,H),new THREE.MeshStandardMaterial({color:0xe6e8eb,roughness:.95}));mat.position.set(0,-20,-0.5);bench.add(mat);
@@ -841,6 +847,17 @@ const WL=[
  ['46','#6b6f76','DF.SPK1','J3.p1'],['46','#6b6f76','DF.SPK2','J4.p1'],['46',R,'SPK.1','J3.p2',['UR']],['46',K,'SPK.2','J4.p2',['UR']],
  ['47','하양','ESP.19','Q-L.PWM+'],['47','하양','ESP.2','Q-R.PWM+'],['47G',K,w5('L3',3),'Q-L.PWM-'],['47G',K,w5('L3',4),'Q-R.PWM-'],
 ];
+// 꼬리표 이름: 번호 + 극성(+ − 5V 3V3) + 꽂히는 부품(.핀). 전선 양 끝에 같은 이름을 붙인다.
+const SIGN={'빨강':'+','검정':'−','주황':'5V','분홍':'5V','보라':'3V3'};
+const isHub=e=>/^(TB\d|W\d|G\d|V1|L\d|J\d|F\d)\./.test(e);
+function tagOf([n,col,a,b]){const sg=SIGN[col];const E=[a,b];
+  const dev=E.find(e=>!isHub(e)&&!e.startsWith('ESP.'))||E.find(e=>e.startsWith('ESP.'))||E.find(e=>!/^(W|G|V|L)\d/.test(e))||a;
+  const [inst,pin]=dev.split('.');
+  if(sg)return `${n}${sg==='+'||sg==='−'?sg:' '+sg} ${inst}`;
+  if(inst==='ESP')return `${n} G${pin}`;
+  return `${n} ${inst}.${pin}`}
+WL.forEach(w=>w.tag=tagOf(w));
+const tagsOf=n=>[...new Set(WL.filter(w=>w[0]===String(n)&&w[2]!=='ADP.out').map(w=>w.tag))];
 const WM={asm:[],bench:[]};
 function buildWires(S){const AA=A[S];const missing=[];
   for(const [n,col,a,b,holes,thick] of WL){if(S==='asm'&&n==='1')continue;
@@ -849,8 +866,13 @@ function buildWires(S){const AA=A[S];const missing=[];
     const curve=new THREE.CatmullRomCurve3(pts,false,'centripetal');
     const r=thick?1.25:.8;const g=new THREE.TubeGeometry(curve,Math.max(40,Math.round(curve.getLength()/3)),r,8,false);
     const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:CN[col]||col,roughness:.5}));
-    m.userData={key:S==='asm'?'X_WIRES':'B_WIRES',kind:'wire',wire:n,scene:S,label:`${n}번 전선`,base:m.material.color.getHex(),op:1,curve,r};
-    (S==='asm'?cad:bench).add(m);items.push(m);WM[S].push(m)}
+    const tag=tagOf([n,col,a,b]);
+    m.userData={key:S==='asm'?'X_WIRES':'B_WIRES',kind:'wire',wire:n,scene:S,label:`${n}번 전선`,base:m.material.color.getHex(),op:1,curve,r,tag,ends:[a,b]};
+    (S==='asm'?cad:bench).add(m);items.push(m);WM[S].push(m);
+    for(const t of [0,1]){const p=curve.getPointAt(t),d=curve.getTangentAt(t).clone();if(t===1)d.negate();
+      const c=thick?new THREE.Mesh(new THREE.CylinderGeometry(1.7,1.7,8,12),new THREE.MeshStandardMaterial({color:0xc9cdd2,metalness:.8,roughness:.3})):new THREE.Mesh(new THREE.BoxGeometry(2.6,13,2.6),new THREE.MeshStandardMaterial({color:0x1c1d20,roughness:.6}));
+      c.quaternion.setFromUnitVectors(V3(0,1,0),d);c.position.copy(p).addScaledVector(d,thick?4:6.5);
+      c.userData={...m.userData,kind:'wire',base:c.material.color.getHex(),op:1,conn:true};m.parent.add(c);items.push(c)}}
   if(missing.length)console.warn('끝점 없음',S,missing.join(' '))}
 function usbCable(){const o=INST.bench.ESP,b=A.bench['LAPTOP.usb'];if(!o||!b)return;
   const a=V3(0,-27,3).applyMatrix4(o.matrix);
@@ -858,6 +880,58 @@ function usbCable(){const o=INST.bench.ESP,b=A.bench['LAPTOP.usb'];if(!o||!b)ret
   const m=new THREE.Mesh(new THREE.TubeGeometry(c,80,1.8,8,false),new THREE.MeshStandardMaterial({color:0x2a2b2f,roughness:.6}));
   m.userData={key:'B_USB',kind:'buy',type:'LAPTOP',inst:'LAPTOP',scene:'bench',label:'USB-C 데이터 케이블',base:0x2a2b2f,op:1,emis:0};bench.add(m);items.push(m)}
 
+// --- 3D 꼬리표·핀 라벨 (스프라이트)
+const labelLayer=new THREE.Group();scene.add(labelLayer);
+function labelSprite(text,col='#1f5eff',hmm=5){const c=document.createElement('canvas');const g=c.getContext('2d');const F='700 40px "Gmarket Sans","Apple SD Gothic Neo",sans-serif';g.font=F;
+  const w=Math.ceil(g.measureText(text).width)+40;c.width=w;c.height=60;g.font=F;g.fillStyle='#ffffff';g.fillRect(0,0,w,60);g.fillStyle=col;g.fillRect(0,0,12,60);
+  g.strokeStyle='#111';g.lineWidth=3;g.strokeRect(1.5,1.5,w-3,57);g.fillStyle='#111';g.textBaseline='middle';g.fillText(text,22,32);
+  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,depthTest:false,transparent:true}));
+  s.scale.set(hmm*w/60,hmm,1);s.renderOrder=20;return s}
+let pinInst=null;
+function updateLabels(){labelLayer.children.slice().forEach(o=>{labelLayer.remove(o);o.material.map?.dispose();o.material.dispose()});
+  if(!ready)return;const S=mode==='bench'?'bench':'asm';const frame=S==='bench'?bench:cad;
+  let ws=[];if(wSel!=null)ws=WM[S].filter(m=>m.userData.wire===wSel);
+  else if(mode==='bench')ws=WM.bench.filter(m=>benchStepOfWire[m.userData.wire]===bCur);
+  else if(mode==='wire')ws=WM.asm.filter(m=>(wireStep[m.userData.wire]??9)===wCur);
+  const up=S==='bench'?V3(0,0,1):V3(0,1,0);
+  for(const m of ws){const cv=m.userData.curve,col=CN[(D.wires.find(w=>String(w[0])===m.userData.wire)||[])[5]?.split(/[\/ ]/)[0]]||'#'+m.userData.base.toString(16).padStart(6,'0');
+    for(const t of [.1,.9]){const p=cv.getPointAt(t).add(up.clone().multiplyScalar(5));const s=labelSprite(m.userData.tag,'#'+m.userData.base.toString(16).padStart(6,'0'),S==='bench'?5.5:5);
+      s.position.copy(frame.localToWorld(p.clone()));s.scale.multiplyScalar(.001);labelLayer.add(s)}}
+  if(pinInst&&INST[S][pinInst]){const o=INST[S][pinInst];const box=new THREE.Box3().setFromObject(o);const cw=box.getCenter(new THREE.Vector3());const cl=frame.worldToLocal(cw.clone());
+    for(const k in A[S]){if(!k.startsWith(pinInst+'.'))continue;const pin=k.slice(pinInst.length+1);if(pin==='W'||pin==='plug'||pin==='out'||pin==='usb')continue;
+      const p=A[S][k].clone();const wired=WL.filter(w=>w[2]===k||w[3]===k);const txt=pin+(wired.length?' · '+wired.map(w=>w.tag).join(', '):'');
+      const dir=p.clone().sub(cl);dir.z=S==='bench'?0:dir.z;if(S==='asm')dir.y=0;if(dir.length()<1e-3)dir.set(1,0,0);dir.normalize();
+      const q=p.clone().addScaledVector(dir,9).add(up.clone().multiplyScalar(3));const s=labelSprite(txt,wired.length?'#1f5eff':'#c9ced6',2.6);s.position.copy(frame.localToWorld(q));s.scale.multiplyScalar(.001);labelLayer.add(s)}}}
+function showPins(inst){pinInst=pinInst===inst?null:inst;updateLabels();if(pinInst){const S=mode==='bench'?'bench':'asm';const o=INST[S][inst];if(o){const b=new THREE.Box3().setFromObject(o);fitBox(b,S==='bench'?[0,1,.25]:[0,.2,-1],1.6)}}
+  if(infoFor?.t==='inst')showInfoInst(infoFor.u)}
+// --- 2D 평면도: 책상(1차 연결) 배치를 위에서 본 그림. 이 단계 부품은 진하게, 선은 실제 색·극성·꼬리표로
+const NM2={ESP:'ESP32',DF:'DFPlayer','MD-L':'MD-L (IBT-2)','MD-R':'MD-R (IBT-2)','LM-A':'LM-A 5V','LM-B':'LM-B 5V','Q-L':'Q-L 팬','Q-R':'Q-R 팬','US-L':'초음파 L','US-R':'초음파 R',PIR:'PIR',LCD:'화면',SPK:'스피커','FAN-L':'팬 L','FAN-R':'팬 R','ACT-L':'액추에이터 L','ACT-R':'액추에이터 R',JACK:'DC 잭',ADP:'어댑터 12V',F1:'퓨즈 F1',F2:'퓨즈 F2'};
+let BB2=null;
+function benchBoxes(){if(BB2)return BB2;BB2={};for(const n in INST.bench){if(n==='LAPTOP')continue;const b=new THREE.Box3();INST.bench[n].updateMatrixWorld(true);INST.bench[n].traverse(m=>{if(m.isMesh&&!/^wire/.test(m.material.name||''))b.expandByObject(m)});if(b.isEmpty())continue;const a=bench.worldToLocal(b.min.clone()),c=bench.worldToLocal(b.max.clone());
+  BB2[n]={x0:Math.min(a.x,c.x),x1:Math.max(a.x,c.x),y0:Math.min(a.y,c.y),y1:Math.max(a.y,c.y)}}return BB2}
+function planSVG(nums){if(!ready)return '<div class="note">3D를 불러오면 평면도가 나옵니다.</div>';const B=benchBoxes();const NS=new Set(nums.map(String));
+  const segs=WL.filter(w=>NS.has(w[0])&&A.bench[w[2]]&&A.bench[w[3]]);const inv=new Set();segs.forEach(w=>{inv.add(w[2].split('.')[0]);inv.add(w[3].split('.')[0])});
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;for(const n in B){x0=Math.min(x0,B[n].x0);x1=Math.max(x1,B[n].x1);y0=Math.min(y0,B[n].y0);y1=Math.max(y1,B[n].y1)}
+  if(inv.size){x0=1e9;x1=-1e9;y0=1e9;y1=-1e9;for(const n of inv){const b=B[n];if(!b)continue;x0=Math.min(x0,b.x0);x1=Math.max(x1,b.x1);y0=Math.min(y0,b.y0);y1=Math.max(y1,b.y1)}const cw=Math.max(x1-x0,440),ch=Math.max(y1-y0,260),cx0=(x0+x1)/2,cy0=(y0+y1)/2;x0=cx0-cw/2;x1=cx0+cw/2;y0=cy0-ch/2;y1=cy0+ch/2}
+  x0-=40;x1+=40;y0-=34;y1+=34;const X=x=>x-x0,Y=y=>y1-y;let h='';const inBox=b=>b.x1>x0&&b.x0<x1&&b.y1>y0&&b.y0<y1;
+  for(const n in B){const b=B[n],on=inv.has(n);if(!inBox(b))continue;h+=`<rect x="${X(b.x0).toFixed(1)}" y="${Y(b.y1).toFixed(1)}" width="${(b.x1-b.x0).toFixed(1)}" height="${(b.y1-b.y0).toFixed(1)}" rx="2" fill="${on?'#ffffff':'#f4f5f7'}" stroke="${on?'#111':'#c8ccd2'}" stroke-width="${on?1.6:.8}"/>`;
+    const lab=NM2[n]||n;h+=`<text x="${X((b.x0+b.x1)/2).toFixed(1)}" y="${(Y(b.y0)+11).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="${on?700:500}" fill="${on?'#111':'#9aa0a6'}">${esc(lab)}</text>`}
+  let tags='';const placed=[];
+  segs.forEach((w,i)=>{const a=A.bench[w[2]],b=A.bench[w[3]];const col=CN[w[1]]||w[1];const ax=X(a.x),ay=Y(a.y),bx=X(b.x),by=Y(b.y);
+    const mx=(ax+bx)/2,my=(ay+by)/2,dx=bx-ax,dy=by-ay,L=Math.hypot(dx,dy)||1,k=((i%3)-1)*.12+.08;const cx=mx-dy*k,cy=my+dx*k;
+    const sw=w[5]?2.6:1.6,dark=col==='#202124';
+    h+=`<path d="M${ax.toFixed(1)},${ay.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${bx.toFixed(1)},${by.toFixed(1)}" fill="none" stroke="#fff" stroke-width="${sw+2}"/><path d="M${ax.toFixed(1)},${ay.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${bx.toFixed(1)},${by.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${sw}" ${col==='#f4f4f4'?'stroke-dasharray="4 2"':''}/>`;
+    const sg=SIGN[w[1]];for(const [px,py] of [[ax,ay],[bx,by]]){h+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.4" fill="${col}" stroke="#111" stroke-width=".6"/>`;
+      if(sg==='+'||sg==='−')h+=`<text x="${(px+5).toFixed(1)}" y="${(py-4).toFixed(1)}" font-size="10" font-weight="700" fill="${sg==='+'?'#d7263d':'#111'}">${sg}</text>`}
+    let tx=(ax+2*cx+bx)/4,ty=(ay+2*cy+by)/4;const tw=w.tag.length*5.2+8;for(let k=0;k<14&&placed.some(r=>Math.abs(r[0]-tx)<(r[2]+tw)/2+1&&Math.abs(r[1]-ty)<13);k++)ty+=(k%2?-1:1)*13*Math.ceil((k+1)/2);placed.push([tx,ty,tw]);
+    tags+=`<rect x="${(tx-tw/2).toFixed(1)}" y="${(ty-6.5).toFixed(1)}" width="${tw.toFixed(1)}" height="12" rx="2" fill="#fff" stroke="${dark?'#111':col}" stroke-width="1"/><text x="${tx.toFixed(1)}" y="${(ty+3).toFixed(1)}" text-anchor="middle" font-size="8.5" font-weight="700" fill="#111">${esc(w.tag)}</text>`});
+  if(!segs.length)h+=`<text x="${X(0)}" y="${Y(y1-60)}" text-anchor="middle" font-size="12" fill="#5d6068">이 단계는 선을 잇지 않습니다.</text>`;
+  return `<div class="plan paper"><svg viewBox="0 0 ${(x1-x0).toFixed(0)} ${(y1-y0).toFixed(0)}" font-family="'Gmarket Sans','Apple SD Gothic Neo',sans-serif" role="img" aria-label="이 단계 평면 배선도">${h}${tags}</svg></div>
+  <div class="note">평면도는 1차 연결 책상 배치를 위에서 본 그림입니다. 진한 상자가 이 단계에 쓰는 부품, 점이 꽂는 자리, <b style="color:#d7263d">+</b> / <b>−</b>는 극성입니다. 하얀 점선은 흰 선입니다.</div>`}
+function tagTable(){return `<details><summary>꼬리표 이름표 전체 (${WL.filter(w=>w[0]!=='1').length + 1}개) — 선 양 끝에 같은 이름</summary>`+table(['꼬리표','한쪽 끝','다른 끝','색'],WL.map(w=>[w.tag,w[2].replace('.',' '),w[3].replace('.',' '),w[1].startsWith('#')?'회색':w[1]]),[0])+'</details>'}
+// 단계를 바꾸면 그 단계 선으로 카메라 맞추기
+function fitStep(){if(!ready)return;const S=mode==='bench'?'bench':'asm';const ws=WM[S].filter(m=>S==='bench'?benchStepOfWire[m.userData.wire]===bCur:(wireStep[m.userData.wire]??9)===wCur);
+  if(!ws.length){if(S==='bench')fitBench();else view('back');return}const b=new THREE.Box3();ws.forEach(m=>b.expandByObject(m));fitBox(b,S==='bench'?[0,1.1,.6]:[0,.15,-1],1.25)}
 let halo=[];
 function clearHalo(){halo.forEach(h=>h.parent?.remove(h));halo=[]}
 function selectWire(n,fit){wSel=n==null?null:String(n);clearHalo();
@@ -929,7 +1003,7 @@ function paint(){
     const shell=/^F_(LOWER|UPPER|SPLICE)/.test(u.key),cover=/^F_COVER/.test(u.key);
     if(u.scene==='bench'){
       if(u.kind==='wire'){const s=benchStepOfWire[u.wire]??99;vis=s<=bCur;if(sel!=null){hi=u.wire===sel;ghost=hi?0:.15}else ghost=s===bCur?0:.3}
-      else hi=!!focusInst&&u.inst===focusInst}
+      else{hi=!!focusInst&&u.inst===focusInst;if(!hi&&!focusInst&&wSel==null){const ws=BENCH[bCur-1].w.map(String);hi=WL.some(w=>ws.includes(w[0])&&(w[2].startsWith(u.inst+'.')||w[3].startsWith(u.inst+'.')))}}}
     else if(u.key==='Z_UMB'){vis=mode==='anim'&&o.visible}
     else if(mode==='asm'||mode==='test'){const st=mode==='test'?17:aCur;
       if(u.kind==='wire'){vis=st>=14;hi=st===14}else{const s=stepOf(u.key);vis=s<=st;hi=s===st&&mode==='asm'}
@@ -953,6 +1027,7 @@ function paint(){
     m.transparent=op<1;m.opacity=op;m.depthWrite=!ghost;m.needsUpdate=true;
     if(u.edge)u.edge.material.opacity=ghost?ghost*.6:.55}
   const s=$('#sel');if(mode==='print'&&focus){s.hidden=false;s.textContent=focus.nm}else if(!selText)s.hidden=true;
+  updateLabels();
 }
 
 // ================= 부품 카드 =================
@@ -968,7 +1043,8 @@ function infoHtml({img,nm,fn,size,pins,tip,wires,memoKey,extra,ph}){
 let infoFor=null;
 function showInfoInst(u){focusInst=u.inst;infoFor={t:'inst',u};const pi=PI[u.type]||{};
   const objs=items.filter(o=>o.userData.inst===u.inst&&o.userData.scene===u.scene&&o.userData.kind==='buy');const sz=sizeOf(objs);
-  $('#info').innerHTML=infoHtml({img:pi.img,nm:(pi.nm||u.label)+(u.inst&&u.inst!==u.type?` · ${u.inst}`:''),fn:pi.fn,size:pi.size?`${pi.size} (3D ${sz})`:sz,pins:pi.pins,tip:pi.tip,wires:wiresOf(u.inst),memoKey:'part-'+u.inst});
+  const hasPins=Object.keys(A[u.scene]).some(k=>k.startsWith(u.inst+'.'));
+  $('#info').innerHTML=infoHtml({img:pi.img,nm:(pi.nm||u.label)+(u.inst&&u.inst!==u.type?` · ${u.inst}`:''),fn:pi.fn,size:pi.size?`${pi.size} (3D ${sz})`:sz,pins:pi.pins,tip:pi.tip,wires:wiresOf(u.inst),memoKey:'part-'+u.inst,extra:hasPins?`<dt>핀</dt><dd><button class="btn" data-a="pins" data-inst="${esc(u.inst)}">${pinInst===u.inst?'핀 이름 끄기':'핀 크게 보기 (이름·꼬리표)'}</button></dd>`:''});
   $('#info').hidden=false;$('#panel').scrollTop=0}
 function showInfoPrint(p,key){infoFor={t:'print',p,key};const objs=items.filter(o=>o.userData.kind==='print'&&(p?o.userData.part===p:o.userData.key===key));
   const id=p?p.id:key.replace(/^F_/,'');const pre=Object.keys(PFN).find(k=>id.startsWith(k));
@@ -980,6 +1056,7 @@ function showInfoWire(n){const w=WIRE[n];if(!w)return;infoFor={t:'wire',n};
   $('#info').hidden=false}
 $('#info').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.closest('[data-memo]'))return;
   if(b.dataset.a==='info-close'){$('#info').hidden=true;focusInst=null;infoFor=null;selText=false;selectWire(null);return}
+  if(b.dataset.a==='pins'){showPins(b.dataset.inst);return}
   if(b.dataset.w){const prev=infoFor;selectWire(wSel===b.dataset.w?null:b.dataset.w,true);if(prev&&prev.t==='inst')showInfoInst(prev.u)}});
 
 function focusPart(p){focus=p;$('#tIso').hidden=false;renderPrint();paint();showInfoPrint(p);
@@ -1034,7 +1111,7 @@ function animFrame(dt){
   const t=aT;
   const lift=100*(ease((t-17)/3)-ease((t-24.5)/3));
   AN.car?.set([0,0,lift]);if(AN.rod)AN.rod.position.set(AN.rod0.x,AN.rod0.y,AN.rod0.z+lift);
-  if(AN.umb){const inZ=t<3?400:350*(1-ease((t-3)/3));const out=400*ease((t-21)/2.2);AN.umb.position.set(AN.umb0.x,AN.umb0.y,AN.umb0.z+inZ+lift+out);
+  if(AN.umb){const inZ=t<3?420:420*(1-ease((t-3)/3));const out=400*ease((t-21)/2.2);AN.umb.position.set(AN.umb0.x,AN.umb0.y,AN.umb0.z+inZ+lift+out);
     AN.umb.visible=t>=2.6&&t<23.5;const op=t<3.2?Math.max(0,(t-2.6)/.6):t>22.6?Math.max(0,(23.5-t)/.9):1;AN.umb.traverse(m=>{if(m.isMesh){m.visible=true;m.material.transparent=op<1;m.material.opacity=op}})}
   AN.fans.forEach(f=>{if(t>9&&t<15)f.rotation.z+=dt*20});
   AN.us.visible=(t>7&&t<9)||(t>24&&t<25.5);if(AN.us.visible)AN.us.material.opacity=.12+.12*Math.abs(Math.sin(t*8));
