@@ -103,7 +103,17 @@ h2.t{margin:0;font-size:22px;line-height:1.3;font-weight:700;letter-spacing:-.01
 .ck.on,.item.on{background:var(--accent-soft)}
 .item{border-bottom:1px solid var(--line)}.item .ck{border-bottom:0}.item .find{margin:0 0 10px 32px}
 .tg{display:inline-block;font-family:var(--mono);font-size:11.5px;color:var(--fg);border:1px solid var(--fg);border-left:4px solid var(--accent);padding:0 5px;margin:2px 4px 0 0;border-radius:2px}
-.plan svg{display:block;min-width:720px;width:100%;height:auto;background:#fff}
+.plan.paper svg{display:block;width:100%;min-width:0;height:auto;background:#fff}
+.plan.paper.zoom svg{min-width:900px}
+.ends{display:flex;flex-direction:column;gap:3px;margin-top:4px}
+.seg{font-size:13.5px;line-height:1.55}
+.seg .nm{font-weight:700}
+.silk{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--sub);border:1px solid var(--line);padding:0 4px;margin-left:4px;border-radius:2px}
+.how{font-size:12px;color:var(--accent);margin-left:4px;white-space:nowrap}
+.kind{display:inline-block;font-size:12px;font-weight:700;border:1px solid var(--fg);padding:0 6px;border-radius:2px;margin-left:6px}
+.todo{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px;font-size:15px;line-height:1.65;max-width:62ch}
+.howbox{border:1px solid var(--line);border-left:4px solid var(--accent);padding:10px 12px;font-size:13.5px;line-height:1.65;display:flex;flex-direction:column;gap:4px}
+.howbox b{font-weight:700}
 .cmds{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .kbd{font-family:var(--mono);font-weight:700;font-size:13px;border:1px solid var(--fg);border-bottom-width:2px;padding:1px 7px;border-radius:3px}
 .paper{background:var(--paper);border:1px solid var(--line);overflow-x:auto;padding:8px}
@@ -562,24 +572,35 @@ const wireStep={};D.wsteps.forEach(s=>s.wires.forEach(n=>wireStep[String(n)]=s.n
 const CN={'빨강':'#d7263d','검정':'#202124','주황':'#f28c28','분홍':'#e86aa6','보라':'#7b5cff','파랑':'#1f5eff','초록':'#2f9e44','노랑':'#f5c400','갈색':'#8b5a2b','하양':'#f4f4f4','회색':'#9aa0a6'};
 const swatch=c=>{const cs=String(c).split(/[\/ ]/).map(x=>CN[x]).filter(Boolean);return cs.length?`<span class="sw" style="background:linear-gradient(90deg,${cs.map((x,i)=>`${x} ${i/cs.length*100}% ${(i+1)/cs.length*100}%`).join(',')})"></span>`:''};
 function table(head,rows,mono=[]){return `<div class="tbl"><table><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td class="${mono.includes(i)?'m':''}">${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}
-const wireItem=n=>{const w=WIRE[String(n)];const tg=typeof tagsOf==='function'?tagsOf(n):[];return {k:'wn-'+n,n:String(n),h:`<span class="wn">${n}</span>${swatch(w[5])}${esc(w[1])} → ${esc(w[2])}<span class="sm">${w[3]} · ${esc(w[4])} cm · ${esc(w[5])}</span>${tg.length?`<span class="sm">꼬리표: ${tg.map(t=>`<b class="tg">${esc(t)}</b>`).join(' ')}</span>`:''}`}};
+const wireItem=n=>{n=String(n);const w=WIRE[n];const segs=WL.filter(x=>x[0]===n);const k=wireKind(n);const len=w&&w[4]&&w[4]!=='-'?` · ${esc(w[4])} cm`:'';
+  const rows=segs.map(x=>{const a=korEnd(x[2]),b=korEnd(x[3]);const c=CN[x[1]]?x[1]:'회색';
+    return `<div class="seg">${swatch(c)}<b>${esc(c)} 선</b> — ${a.html} <b>→</b> ${b.html}</div>`}).join('');
+  return {k:'wn-'+n,n,h:`<span class="wn">${esc(n)}번 선</span><span class="kind">${esc(k)}</span><span class="sm">${segs.length}가닥${len}</span><div class="ends">${rows}</div>`}};
 function ticks(n,cur,doneFn){let h='<div class="ticks">';for(let i=1;i<=n;i++)h+=`<button data-s="${i}" class="${doneFn(i)?'d':''}${i===cur?' c':''}" aria-label="${i}단계">${i}</button>`;return h+'</div>'}
 const itemsHtml=items=>`<div class="list">${items.map(x=>`<div class="item${x.n&&String(wSel)===x.n?' on':''}"><button class="ck" data-k="${x.k}" aria-pressed="${!!checks[x.k]}"><span class="bx">${checks[x.k]?'✓':''}</span><span class="tx">${x.h}</span></button>${x.n?`<button class="btn find" data-w="${x.n}">${String(wSel)===x.n?'강조 끄기':'3D에서 찾기'}</button>`:''}</div>`).join('')}</div>`;
 
 // ================= 1차 연결 (몸통 밖 책상에서) =================
 const BENCH=[
- {t:'책상에 펼치고 라벨 붙이기',d:'부품을 3D 그림 자리대로 펼쳐 놓습니다. 어댑터는 아직 꽂지 않습니다.',w:[],c:['부품마다 이름 라벨을 붙였다 (ESP, MD-L, LM-A…)','전선 양 끝에 번호 라벨을 붙였다','멀티미터를 준비했다 (DC V · Ω · 통전)']},
- {t:'ESP32에 시험 코드 올리기',d:'ESP32만 USB-C로 노트북에 꽂습니다. revd_wiring_test를 올리고 시리얼 모니터를 115200으로 엽니다.',w:[],c:['메뉴 글자가 뜬다 (=== REV D 배선 시험 ===)','VIN 핀 4.6~4.95V, 3V3 핀 3.3V를 재고 뒷면에 스티커']},
- {t:'12V 들어오게 하기',d:'어댑터 → DC 잭 → 퓨즈 F1 → W1(+). 잭의 −는 G1로 갑니다.',w:[1,2,3,4],c:['어댑터를 꽂고 W1–G1이 +12V (−가 나오면 잭 두 선을 바꿈)','확인 뒤 어댑터를 뺐다']},
- {t:'5V 두 개 맞추기',d:'LM-A, LM-B의 입력만 연결합니다. 출력은 비워 둔 채 어댑터를 꽂고, 파란 가변저항을 돌려 5.00V로 맞춥니다.',w:[9,10,12],c:['LM-A 출력 5.00V (멀티미터 기준)','LM-B 출력 5.00V','어댑터를 뺐다']},
- {t:'5V·GND 줄 만들기',d:'LM-A 출력을 5V 줄(V1)과 신호 GND 줄(L1~L3)로 보냅니다. 48번은 12V 쪽 GND와 신호 GND를 잇는 단 하나의 선입니다.',w:[11,20,25,48],c:['V1–L1 = 5.00V','W1–V1 = 약 7V']},
- {t:'ESP32에 전원 넣기',d:'ESP32 VIN에 5V를 넣고, 3V3 핀의 3.3V를 TB2 P10에서 화면·드라이버로 나눕니다.',w:[21,27,28],c:['VIN 5.0V, 3V3 3.3V','USB를 빼도 어댑터만으로 켜진다']},
- {t:'거리 센서와 사람 감지',d:'초음파 ECHO는 5V 신호라 TB1 저항을 거쳐 ESP32로 갑니다. PIR OUT은 바로 연결합니다.',w:[22,23,24,34,35,36,37,38,39],c:['u: 손을 10 cm에 대면 약 100 mm가 나온다','p: 손을 흔들면 1, 멈추면 0'],k:['u','p']},
- {t:'화면과 소리',d:'화면 SPI 5가닥, DFPlayer TX/RX, 스피커 두 선을 연결합니다.',w:[26,40,42,43,44,45,46],c:['t: 빨강 → 초록 → 파랑, 흰 사각형이 왼쪽 위','d: 안내 소리가 난다'],k:['t','d']},
- {t:'팬',d:'MOSFET 모듈의 초록 단자(PWM)는 + 와 − 두 칸입니다. +에 GPIO19(R은 GPIO2), −에 신호 GND를 잇습니다.',w:[13,14,17,18,47,'47G'],c:['초록 단자 − 칸에 GND (추가 선 47G)','파란 3칸 단자의 글자를 확인해 메모로 남겼다','f: 두 팬이 3초 돈다'],k:['f']},
- {t:'모터 드라이버와 액추에이터',d:'액추에이터는 책상에 눕혀 테이프로 고정하고 로드 앞을 비웁니다. 퓨즈 F2는 맨 마지막에 꽂습니다.',w:[5,6,7,8,15,16,29,30,31,32,33],c:['F2를 뺀 채 IBT-2 VCC 3.3V','F2를 꽂고 B+–B− 12V','q / a: L 로드가 조금 나왔다 들어간다 (반대면 M+/M− 바꿈)','w / s: R도 같은 방법','L 명령에 R이 움직이면 TB2 L/R이 바뀐 것'],k:['q','a','w','s']},
- {t:'기록하고 판으로 옮기기',d:'잰 값과 실물이 다른 점을 메모로 남깁니다. 판으로 옮길 때 선을 뽑지 않도록 묶음마다 15 cm 여유를 둡니다.',w:[],c:['전압·거리 값을 메모에 남겼다','연결 사진을 찍었다']},
+ {t:'부품 펼치고 이름표 붙이기',d:['부품을 오른쪽 3D 그림과 같은 자리에 펼쳐 놓습니다.','부품마다 이름표를 붙입니다. 이름은 3D 그림과 아래 선 번호표에 나온 이름을 그대로 씁니다. (예: 왼쪽 모터 드라이버)','선은 양 끝에 번호 스티커만 붙이면 됩니다.','어댑터는 아직 콘센트에 꽂지 않습니다.'],w:[],c:['부품마다 이름표를 붙였다','멀티미터를 준비했다 (직류 전압 · 저항 · 삑 소리 통전)','점퍼선, 굵은 전선, 피복 벗기는 도구, 작은 드라이버를 꺼냈다']},
+ {t:'ESP32에 시험 코드 올리기',d:['ESP32 보드만 USB-C 케이블로 노트북에 꽂습니다. 다른 선은 아직 잇지 않습니다.','아두이노 IDE에서 revd_wiring_test 코드를 보드에 올립니다.','시리얼 모니터를 열고 속도를 115200으로 맞춥니다.'],w:[],c:['시리얼 모니터에 "=== REV D 배선 시험 ===" 글자가 뜬다','멀티미터로 VIN 핀이 4.6~4.95V, 3V3 핀이 3.3V로 나온다']},
+ {t:'12V 들어오게 하기',d:['전원 잭 → 퓨즈 홀더 1 → 12V 나눔 단자 1 순서로 빨간 선을 잇습니다.','전원 잭의 마이너스 나사는 검은 선으로 12V 접지 단자 1에 잇습니다.','어댑터를 콘센트에 꽂고, 멀티미터 빨간 침을 12V 나눔 단자 1, 검은 침을 12V 접지 단자 1에 대 봅니다.','확인했으면 어댑터를 뺍니다.'],w:[1,2,3,4],c:['12V 근처가 나온다 (마이너스 값이면 전원 잭의 두 선을 서로 바꾼다)','어댑터를 뺐다']},
+ {t:'5V 변환기 두 개 맞추기',d:['5V 변환기 A와 B의 입력 쪽만 잇습니다. 출력 쪽은 아직 비워 둡니다.','어댑터를 꽂고, 변환기 출력 나사 두 곳에 멀티미터를 댑니다.','파란 네모 부품 위의 작은 나사를 드라이버로 돌려 5.00V에 맞춥니다.','두 개 다 맞췄으면 어댑터를 뺍니다.'],w:[9,10,12],c:['5V 변환기 A 출력이 5.00V','5V 변환기 B 출력이 5.00V','어댑터를 뺐다']},
+ {t:'5V 줄과 접지 줄 만들기',d:['5V 변환기 A의 출력 플러스는 5V 나눔 단자로, 출력 마이너스는 신호 접지 단자 1로 보냅니다.','신호 접지 단자 1 → 2 → 3을 검은 선으로 차례로 잇습니다.','48번 선은 12V 쪽 접지와 5V 쪽 접지가 만나는 단 하나의 선입니다. 다른 곳에서 두 접지를 또 잇지 않습니다.'],w:[11,20,25,48],c:['5V 나눔 단자와 신호 접지 단자 사이가 5.00V','12V 나눔 단자 1과 5V 나눔 단자 사이가 약 7V']},
+ {t:'ESP32에 전원 넣기',d:['5V 나눔 단자에서 ESP32의 VIN 핀으로, 신호 접지 단자 1에서 ESP32의 접지 핀으로 점퍼선을 꽂습니다.','VIN 자리를 꼭 두 번 확인합니다. 3.3V 핀에 5V를 넣으면 보드가 망가집니다.','ESP32의 3.3V 핀에서 신호 단자대 10번 칸으로 보낸 뒤, 그 칸에서 화면과 두 모터 드라이버의 전원 핀으로 나눕니다.'],w:[21,27,28],c:['VIN 핀 5.0V, 3.3V 핀 3.3V','USB를 빼고 어댑터만 꽂아도 ESP32 불이 켜진다']},
+ {t:'거리 센서와 사람 감지 센서',d:['센서 3개에 전원 선과 접지 선을 꽂습니다.','거리 센서의 "신호 받기" 핀은 5V가 나와서 ESP32에 바로 꽂으면 안 됩니다. 저항 단자대를 거쳐 낮춘 뒤 ESP32로 갑니다.','사람 감지 센서의 신호 핀은 ESP32에 바로 꽂습니다.'],w:[22,23,24,34,35,36,37,38,39],c:['시리얼 모니터에 u 입력 → 손을 10 cm 앞에 대면 약 100 mm가 나온다','p 입력 → 손을 흔들면 1, 멈추면 0이 나온다'],k:['u','p']},
+ {t:'화면과 소리',d:['화면의 신호 핀 5개를 회색 점퍼선으로 ESP32에 꽂습니다.','소리 모듈은 5V 변환기 B에서 전원을 받고, ESP32와 초록 선 3개로 잇습니다.','스피커 두 선은 이음 단자 3, 4에서 소리 모듈 선과 잇습니다.'],w:[26,40,42,43,44,45,46],c:['t 입력 → 화면이 빨강 → 초록 → 파랑으로 바뀌고 흰 네모가 왼쪽 위에 나온다','d 입력 → 안내 소리가 난다'],k:['t','d']},
+ {t:'팬',d:['팬 스위치 2개에 12V 전원을 잇고, 팬에 달린 선을 꽂습니다.','팬 스위치의 초록 단자는 두 칸입니다. 플러스 칸에는 ESP32 신호 선, 마이너스 칸에는 신호 접지 선을 잇습니다.','파란 3칸 단자에 적힌 글자를 아래 메모에 남겨 주세요.'],w:[13,14,17,18,47,'47G'],c:['초록 단자 마이너스 칸에 접지 선(47G번)을 이었다','파란 3칸 단자의 글자를 메모에 남겼다','f 입력 → 두 팬이 3초 돈다'],k:['f']},
+ {t:'모터 드라이버와 액추에이터',d:['액추에이터를 책상에 눕혀 테이프로 고정합니다. 막대가 나오는 앞쪽은 비워 둡니다.','퓨즈 홀더 2의 퓨즈는 빼 둔 채로 선을 모두 잇습니다.','모든 선을 확인한 뒤, 맨 마지막에 퓨즈를 끼웁니다.'],w:[5,6,7,8,15,16,29,30,31,32,33],c:['퓨즈를 뺀 채 모터 드라이버 전원 핀이 3.3V','퓨즈를 끼운 뒤 모터 드라이버 전원 플러스·마이너스 나사 사이가 12V','q / a 입력 → 왼쪽 막대가 조금 나왔다 들어간다 (반대로 움직이면 모터 플러스·마이너스 선을 서로 바꾼다)','w / s 입력 → 오른쪽도 같은 방법으로 본다','왼쪽 명령에 오른쪽이 움직이면 신호 단자대의 왼쪽·오른쪽 선이 바뀐 것'],k:['q','a','w','s']},
+ {t:'기록하고 판으로 옮기기',d:['잰 값과 실물이 다른 점을 아래 메모에 남깁니다.','연결된 모습을 사진으로 찍어 둡니다.','판으로 옮길 때 선이 뽑히지 않도록 묶음마다 15 cm 여유를 둡니다.'],w:[],c:['전압·거리 값을 메모에 남겼다','연결 사진을 찍었다']},
 ];
+const GLOSS=`<details open><summary>처음이라면 — 선과 단자 이름</summary><div class="howbox">
+<div><b>점퍼선(듀퐁선)</b> — 끝에 검은 플라스틱 머리가 달린 얇은 선입니다. 머리가 구멍이면 "암", 핀이면 "수"입니다. 이 작업은 대부분 암을 씁니다.</div>
+<div><b>한쪽 꽂고 한쪽 벗김</b> — 점퍼선 한쪽 머리는 그대로 두고, 다른 쪽 머리를 잘라 피복을 10 mm 벗겨 단자에 끼웁니다.</div>
+<div><b>굵은 전선(AWG18)</b> — 12V 큰 전류가 흐르는 곳에 쓰는 굵은 선입니다. 양 끝 피복을 10 mm 벗깁니다.</div>
+<div><b>레버 단자(나눔·접지·이음 단자)</b> — 주황 레버가 달린 투명 커넥터입니다. 한 단자 안의 구멍끼리는 모두 이어져 있습니다.</div>
+<div><b>단자대</b> — 나사가 위·아래로 줄지어 있는 검은 막대입니다. 같은 칸의 위·아래 나사는 서로 이어져 있습니다.</div>
+<div><b>ESP32 핀 번호</b> — 보드에 25, D25, IO25처럼 적혀 있습니다. 숫자만 맞으면 됩니다.</div>
+<div><b>빨강은 플러스, 검정은 마이너스(접지)</b>입니다. 바꿔 꽂으면 부품이 망가질 수 있습니다.</div></div></details>`;
 const benchStepOfWire={};BENCH.forEach((s,i)=>s.w.forEach(n=>benchStepOfWire[String(n)]=i+1));
 let bCur=LS.get('bCur',1);
 function renderBench(){
@@ -590,9 +611,12 @@ function renderBench(){
   ${ticks(BENCH.length,bCur,stepDone)}
   <div class="stephead"><span class="no">1차 연결 ${bCur} / ${BENCH.length}</span><div class="nav"><button class="btn" data-a="prev" ${bCur===1?'disabled':''}>이전</button><button class="btn pri" data-a="next" ${bCur===BENCH.length?'disabled':''}>다음 단계</button></div></div>
   <h2 class="t">${esc(s.t)}</h2>
-  <div class="desc">${esc(s.d)}</div>
+  ${bCur===1?GLOSS:''}
+  <div class="sub">할 일</div><ol class="todo">${s.d.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>
   ${s.k?`<div class="cmds"><span class="note">시리얼 모니터에 입력:</span>${s.k.map(k=>`<span class="kbd">${k}</span>`).join('')}</div>`:''}
-  <div class="sub">평면도 — 이 단계</div>${planSVG(s.w)}
+  ${(()=>{const hs=new Set();WL.filter(w=>s.w.map(String).includes(w[0])).forEach(w=>[w[2],w[3]].forEach(e=>{const [i,p]=e.split('.');hs.add(korPin(i,p).how)}));return hs.size?`<div class="sub">이렇게 잇습니다</div><div class="howbox">${[...hs].map(h=>`<div>${HOWLONG[h]}</div>`).join('')}</div>`:''})()}
+  <div class="sub">평면도 — 위에서 본 모습</div>${planSVG(s.w)}
+  <div class="sub">확인하고 이을 선</div>
   ${itemsHtml(items)}
   ${memoBox('b-'+bCur,'이 단계')}
   ${bCur===1?tagTable():''}
@@ -651,6 +675,7 @@ $('#v-wire').addEventListener('click',e=>stepClick(e,'wire'));
 function stepClick(e,kind){const b=e.target.closest('button');if(!b||b.closest('[data-memo]'))return;
   if(b.dataset.k){setCheck(b.dataset.k,!checks[b.dataset.k]);return}
   if(b.dataset.w){selectWire(String(wSel)===b.dataset.w?null:b.dataset.w,true);return}
+  if(b.dataset.a==='zoomplan'){const pl=b.closest('.note')?.previousElementSibling;pl?.classList.toggle('zoom');b.textContent=pl?.classList.contains('zoom')?'작게 보기':'크게 보기';return}
   const max=kind==='wire'?9:BENCH.length;let c=kind==='wire'?wCur:bCur;
   if(b.dataset.s)c=+b.dataset.s;else if(b.dataset.a==='prev')c--;else if(b.dataset.a==='next')c++;else return;
   c=Math.max(1,Math.min(max,c));if(kind==='wire'){wCur=c;LS.set('wCur',c)}else{bCur=c;LS.set('bCur',c)}
@@ -856,7 +881,45 @@ function tagOf([n,col,a,b]){const sg=SIGN[col];const E=[a,b];
   if(sg)return `${n}${sg==='+'||sg==='−'?sg:' '+sg} ${inst}`;
   if(inst==='ESP')return `${n} G${pin}`;
   return `${n} ${inst}.${pin}`}
-WL.forEach(w=>w.tag=tagOf(w));
+// 한글 이름: 초보자가 실물에서 바로 찾도록, 기호 대신 말로 쓴다. 보드에 적힌 글자는 회색 칸으로만 덧붙인다.
+const KN={ADP:'12V 어댑터',JACK:'전원 잭',F1:'퓨즈 홀더 1',F2:'퓨즈 홀더 2',W1:'12V 나눔 단자 1',W2:'12V 나눔 단자 2',W3:'12V 나눔 단자 3',W4:'12V 나눔 단자 4',G1:'12V 접지 단자 1',G2:'12V 접지 단자 2',V1:'5V 나눔 단자',L1:'신호 접지 단자 1',L2:'신호 접지 단자 2',L3:'신호 접지 단자 3',J1:'이음 단자 1',J2:'이음 단자 2',J3:'이음 단자 3',J4:'이음 단자 4','LM-A':'5V 변환기 A','LM-B':'5V 변환기 B','Q-L':'왼쪽 팬 스위치','Q-R':'오른쪽 팬 스위치','MD-L':'왼쪽 모터 드라이버','MD-R':'오른쪽 모터 드라이버','ACT-L':'왼쪽 액추에이터','ACT-R':'오른쪽 액추에이터','FAN-L':'왼쪽 팬','FAN-R':'오른쪽 팬',TB1:'저항 단자대',TB2:'신호 단자대',TB3:'모터선 단자대',ESP:'ESP32 보드','US-L':'왼쪽 거리 센서','US-R':'오른쪽 거리 센서',PIR:'사람 감지 센서',LCD:'화면',DF:'소리 모듈',SPK:'스피커',LAPTOP:'노트북',UMB:'우산'};
+const HOW={lever:'레버 단자에 끼우기',screw:'나사로 조이기',pin:'핀에 꽂기',lead:'달린 선 그대로',plug:'플러그 꽂기'};
+const HOWLONG={lever:'<b>레버 단자</b> — 주황 레버를 위로 올리고, 피복을 10 mm 벗긴 끝을 끝까지 넣은 뒤 레버를 내립니다. 살짝 당겨 빠지지 않으면 됩니다.',
+  screw:'<b>나사 단자</b> — 작은 드라이버로 나사를 풀고, 피복 벗긴 끝을 구멍에 넣고 나사를 조입니다. 살짝 당겨 확인합니다.',
+  pin:'<b>핀에 꽂기</b> — 점퍼선 끝의 검은 구멍(암)을 보드의 금속 핀에 끝까지 밀어 꽂습니다. 핀 옆에 적힌 글자를 꼭 확인합니다.',
+  lead:'<b>달린 선</b> — 부품에 원래 달려 있는 선을 그대로 씁니다. 짧으면 이음 단자로 늘립니다.',
+  plug:'<b>플러그</b> — 둥근 플러그를 구멍에 끝까지 꽂습니다.'};
+const PM={VCC:['전원 핀','pin'],GND:['접지 핀','pin'],TRIG:['신호 보내기 핀','pin'],ECHO:['신호 받기 핀','pin'],OUT:['신호 핀','pin'],SCL:['시계 핀','pin'],SDA:['데이터 핀','pin'],CS:['선택 핀','pin'],DC:['명령 구분 핀','pin'],RES:['리셋 핀','pin'],RX:['받기 핀','pin'],TX:['보내기 핀','pin'],SPK1:['스피커 1 핀','pin'],SPK2:['스피커 2 핀','pin'],
+  'B+':['전원 플러스 나사','screw'],'B-':['전원 마이너스 나사','screw'],'M+':['모터 플러스 나사','screw'],'M-':['모터 마이너스 나사','screw'],RPWM:['정방향 신호 핀','pin'],LPWM:['역방향 신호 핀','pin'],R_EN:['정방향 켜기 핀','pin'],L_EN:['역방향 켜기 핀','pin']};
+function korPin(inst,pin){const t=inst.replace(/-[LR]$/,'').replace(/\d+$/,'');
+  if(/^(W|G|V|L|J)$/.test(t))return {p:`${pin.slice(1)}번 구멍`,how:'lever'};
+  if(t==='F')return {p:`에 달린 선`,how:'lead',glue:1};
+  if(t==='TB'){const m=pin.match(/P(\d+)([ud])/);return {p:`${m[1]}번 칸 ${m[2]==='u'?'위':'아래'} 나사`,how:'screw'}}
+  if(t==='ADP')return {p:'의 플러그',how:'plug',glue:1};
+  if(t==='JACK')return pin==='plug'?{p:'구멍',how:'plug'}:{p:pin==='+'?'플러스 나사':'마이너스 나사',how:'screw'};
+  if(t==='LM')return {p:`${pin.startsWith('IN')?'입력':'출력'} ${pin.endsWith('+')?'플러스':'마이너스'} 나사`,silk:pin.replace('-','−'),how:'screw'};
+  if(t==='Q'){if(pin.startsWith('PWM'))return {p:`초록 단자 ${pin.endsWith('+')?'플러스':'마이너스'} 칸`,how:'screw'};return {p:`파란 단자 ${pin.slice(1)}번 칸`,how:'screw'}}
+  if(t==='ESP'){if(pin==='VIN')return {p:'VIN 핀 (5V 넣는 곳)',silk:'VIN',how:'pin'};if(pin==='GND')return {p:'접지 핀',silk:'GND',how:'pin'};if(pin==='3V3')return {p:'3.3V 핀',silk:'3V3',how:'pin'};
+    return {p:`${pin}번 핀`,silk:pin==='36'?'VP · 36':pin==='39'?'VN · 39':'D'+pin,how:'pin'}}
+  if(t==='SPK')return {p:pin==='1'?'의 빨간 선':'의 검은 선',how:'lead',glue:1};
+  if(pin==='W')return {p:'에 달린 선',how:'lead',glue:1};
+  const m=PM[pin]||[pin,'pin'];return {p:m[0],silk:pin.replace('-','−'),how:m[1]}}
+function korEnd(e){const [inst,pin]=e.split('.');const k=korPin(inst,pin);const nm=KN[inst]||inst;
+  return {...k,nm,text:k.glue?nm+k.p:nm+' '+k.p,html:`<span class="nm">${esc(nm)}</span>${k.glue?'':' '}${esc(k.p)}${k.silk?`<span class="silk">보드 글씨 ${esc(k.silk)}</span>`:''}<span class="how">· ${HOW[k.how]}</span>`}}
+// 선 종류: 무엇을 준비하는지
+function wireKind(n){const w=WIRE[n];const t=w?w[3]:'';
+  if(n==='1')return '어댑터 선';if(n==='47G')return '점퍼선 · 양 끝 벗김';
+  if(/듀퐁 암-암/.test(t))return '점퍼선 · 양쪽 꽂기';
+  if(/듀퐁 (암 \+|벗김 \+ 암)/.test(t))return '점퍼선 · 한쪽 꽂고 한쪽 벗김';
+  if(/양 끝 벗김/.test(t))return '점퍼선 · 양 끝 벗김';
+  if(/원래 선/.test(t))return '달린 선 + 굵은 전선';
+  if(/그대로/.test(t))return '부품에 달린 선';
+  if(/AWG18/.test(t))return '굵은 전선 (AWG18)';
+  return '전선'}
+// 3D 이름표: 번호 + 꽂히는 부품 (한글)
+function korTag([n,col,a,b]){const E=[a,b];const dev=E.find(e=>!isHub(e)&&!e.startsWith('ESP.'))||E.find(e=>e.startsWith('ESP.'))||E.find(e=>!/^(W|G|V|L)\d/.test(e))||a;
+  return `${n}번 ${KN[dev.split('.')[0]]||dev.split('.')[0]}`}
+WL.forEach(w=>w.tag=korTag(w));
 const tagsOf=n=>[...new Set(WL.filter(w=>w[0]===String(n)&&w[2]!=='ADP.out').map(w=>w.tag))];
 const WM={asm:[],bench:[]};
 function buildWires(S){const AA=A[S];const missing=[];
@@ -866,7 +929,7 @@ function buildWires(S){const AA=A[S];const missing=[];
     const curve=new THREE.CatmullRomCurve3(pts,false,'centripetal');
     const r=thick?1.25:.8;const g=new THREE.TubeGeometry(curve,Math.max(40,Math.round(curve.getLength()/3)),r,8,false);
     const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:CN[col]||col,roughness:.5}));
-    const tag=tagOf([n,col,a,b]);
+    const tag=korTag([n,col,a,b]);
     m.userData={key:S==='asm'?'X_WIRES':'B_WIRES',kind:'wire',wire:n,scene:S,label:`${n}번 전선`,base:m.material.color.getHex(),op:1,curve,r,tag,ends:[a,b]};
     (S==='asm'?cad:bench).add(m);items.push(m);WM[S].push(m);
     for(const t of [0,1]){const p=curve.getPointAt(t),d=curve.getTangentAt(t).clone();if(t===1)d.negate();
@@ -899,36 +962,50 @@ function updateLabels(){labelLayer.children.slice().forEach(o=>{labelLayer.remov
       s.position.copy(frame.localToWorld(p.clone()));s.scale.multiplyScalar(.001);labelLayer.add(s)}}
   if(pinInst&&INST[S][pinInst]){const o=INST[S][pinInst];const box=new THREE.Box3().setFromObject(o);const cw=box.getCenter(new THREE.Vector3());const cl=frame.worldToLocal(cw.clone());
     for(const k in A[S]){if(!k.startsWith(pinInst+'.'))continue;const pin=k.slice(pinInst.length+1);if(pin==='W'||pin==='plug'||pin==='out'||pin==='usb')continue;
-      const p=A[S][k].clone();const wired=WL.filter(w=>w[2]===k||w[3]===k);const txt=pin+(wired.length?' · '+wired.map(w=>w.tag).join(', '):'');
+      const p=A[S][k].clone();const wired=WL.filter(w=>w[2]===k||w[3]===k);const kp=korPin(pinInst,pin);const txt=kp.p.replace(/^의 |^에 /,'')+(wired.length?' · '+[...new Set(wired.map(w=>w[0]+'번 선'))].join(', '):'');
       const dir=p.clone().sub(cl);dir.z=S==='bench'?0:dir.z;if(S==='asm')dir.y=0;if(dir.length()<1e-3)dir.set(1,0,0);dir.normalize();
       const q=p.clone().addScaledVector(dir,9).add(up.clone().multiplyScalar(3));const s=labelSprite(txt,wired.length?'#1f5eff':'#c9ced6',2.6);s.position.copy(frame.localToWorld(q));s.scale.multiplyScalar(.001);labelLayer.add(s)}}}
 function showPins(inst){pinInst=pinInst===inst?null:inst;updateLabels();if(pinInst){const S=mode==='bench'?'bench':'asm';const o=INST[S][inst];if(o){const b=new THREE.Box3().setFromObject(o);fitBox(b,S==='bench'?[0,1,.25]:[0,.2,-1],1.6)}}
   if(infoFor?.t==='inst')showInfoInst(infoFor.u)}
 // --- 2D 평면도: 책상(1차 연결) 배치를 위에서 본 그림. 이 단계 부품은 진하게, 선은 실제 색·극성·꼬리표로
-const NM2={ESP:'ESP32',DF:'DFPlayer','MD-L':'MD-L (IBT-2)','MD-R':'MD-R (IBT-2)','LM-A':'LM-A 5V','LM-B':'LM-B 5V','Q-L':'Q-L 팬','Q-R':'Q-R 팬','US-L':'초음파 L','US-R':'초음파 R',PIR:'PIR',LCD:'화면',SPK:'스피커','FAN-L':'팬 L','FAN-R':'팬 R','ACT-L':'액추에이터 L','ACT-R':'액추에이터 R',JACK:'DC 잭',ADP:'어댑터 12V',F1:'퓨즈 F1',F2:'퓨즈 F2'};
 let BB2=null;
-function benchBoxes(){if(BB2)return BB2;BB2={};for(const n in INST.bench){if(n==='LAPTOP')continue;const b=new THREE.Box3();INST.bench[n].updateMatrixWorld(true);INST.bench[n].traverse(m=>{if(m.isMesh&&!/^wire/.test(m.material.name||''))b.expandByObject(m)});if(b.isEmpty())continue;const a=bench.worldToLocal(b.min.clone()),c=bench.worldToLocal(b.max.clone());
+function benchBoxes(){if(BB2)return BB2;BB2={};for(const n in INST.bench){if(n==='LAPTOP'||n==='UMB')continue;const b=new THREE.Box3();INST.bench[n].updateMatrixWorld(true);INST.bench[n].traverse(m=>{if(m.isMesh&&!/^wire/.test(m.material.name||''))b.expandByObject(m)});if(b.isEmpty())continue;const a=bench.worldToLocal(b.min.clone()),c=bench.worldToLocal(b.max.clone());
   BB2[n]={x0:Math.min(a.x,c.x),x1:Math.max(a.x,c.x),y0:Math.min(a.y,c.y),y1:Math.max(a.y,c.y)}}return BB2}
+// 2D 평면도: 책상 배치를 위에서 본 그림. 선 위에는 번호 동그라미만, 설명은 아래 목록에.
 function planSVG(nums){if(!ready)return '<div class="note">3D를 불러오면 평면도가 나옵니다.</div>';const B=benchBoxes();const NS=new Set(nums.map(String));
   const segs=WL.filter(w=>NS.has(w[0])&&A.bench[w[2]]&&A.bench[w[3]]);const inv=new Set();segs.forEach(w=>{inv.add(w[2].split('.')[0]);inv.add(w[3].split('.')[0])});
-  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;for(const n in B){x0=Math.min(x0,B[n].x0);x1=Math.max(x1,B[n].x1);y0=Math.min(y0,B[n].y0);y1=Math.max(y1,B[n].y1)}
-  if(inv.size){x0=1e9;x1=-1e9;y0=1e9;y1=-1e9;for(const n of inv){const b=B[n];if(!b)continue;x0=Math.min(x0,b.x0);x1=Math.max(x1,b.x1);y0=Math.min(y0,b.y0);y1=Math.max(y1,b.y1)}const cw=Math.max(x1-x0,440),ch=Math.max(y1-y0,260),cx0=(x0+x1)/2,cy0=(y0+y1)/2;x0=cx0-cw/2;x1=cx0+cw/2;y0=cy0-ch/2;y1=cy0+ch/2}
-  x0-=40;x1+=40;y0-=34;y1+=34;const X=x=>x-x0,Y=y=>y1-y;let h='';const inBox=b=>b.x1>x0&&b.x0<x1&&b.y1>y0&&b.y0<y1;
-  for(const n in B){const b=B[n],on=inv.has(n);if(!inBox(b))continue;h+=`<rect x="${X(b.x0).toFixed(1)}" y="${Y(b.y1).toFixed(1)}" width="${(b.x1-b.x0).toFixed(1)}" height="${(b.y1-b.y0).toFixed(1)}" rx="2" fill="${on?'#ffffff':'#f4f5f7'}" stroke="${on?'#111':'#c8ccd2'}" stroke-width="${on?1.6:.8}"/>`;
-    const lab=NM2[n]||n;h+=`<text x="${X((b.x0+b.x1)/2).toFixed(1)}" y="${(Y(b.y0)+11).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="${on?700:500}" fill="${on?'#111':'#9aa0a6'}">${esc(lab)}</text>`}
-  let tags='';const placed=[];
+  const list=inv.size?[...inv].filter(n=>B[n]):Object.keys(B);let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+  for(const n of list){const b=B[n];x0=Math.min(x0,b.x0);x1=Math.max(x1,b.x1);y0=Math.min(y0,b.y0);y1=Math.max(y1,b.y1)}
+  for(const w of segs)for(const e of [w[2],w[3]]){const p=A.bench[e];x0=Math.min(x0,p.x);x1=Math.max(x1,p.x);y0=Math.min(y0,p.y);y1=Math.max(y1,p.y)}
+  const pad=36;x0-=pad;x1+=pad;y0-=pad;y1+=pad+14;const W=x1-x0,H=y1-y0;const sc=Math.max(.8,W/420,H/560);const fs=n=>(n*sc).toFixed(1);
+  const X=x=>x-x0,Y=y=>y1-y;let h='',top='';const inBox=b=>b.x1>x0&&b.x0<x1&&b.y1>y0&&b.y0<y1;
+  const obst=[];
+  for(const n in B){const b=B[n],on=inv.has(n);if(!inBox(b))continue;const bx=X(b.x0),by=Y(b.y1),bw=b.x1-b.x0,bh=b.y1-b.y0;
+    h+=`<rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="3" fill="${on?'#ffffff':'#f3f4f6'}" stroke="${on?'#111':'#d3d6db'}" stroke-width="${on?1.6*sc:.8*sc}"/>`;
+    if(on){const lab=KN[n]||n;const lw=lab.length*10.5*sc,lh=14*sc;
+      // 이름 자리: 위 → 아래 → 오른쪽 → 왼쪽 중 다른 이름과 안 겹치는 곳
+      const cand=[[bx+bw/2,by-lh/2-3*sc,'middle'],[bx+bw/2,by+bh+lh/2+3*sc,'middle'],[bx+bw+4*sc+lw/2,by+bh/2,'start'],[bx-4*sc-lw/2,by+bh/2,'end']];
+      let c=cand.find(([x,y])=>!obst.some(o=>Math.abs(o[0]-x)<(o[2]+lw)/2+2*sc&&Math.abs(o[1]-y)<(o[3]+lh)/2))||cand[0];
+      const tx=c[2]==='start'?c[0]-lw/2:c[2]==='end'?c[0]+lw/2:c[0];
+      top+=`<text x="${tx.toFixed(1)}" y="${(c[1]+4*sc).toFixed(1)}" text-anchor="${c[2]}" font-size="${fs(11)}" font-weight="700" fill="#111" paint-order="stroke" stroke="#fff" stroke-width="${fs(4)}">${esc(lab)}</text>`;obst.push([c[0],c[1],lw,lh])}}
+  const badges=[];
   segs.forEach((w,i)=>{const a=A.bench[w[2]],b=A.bench[w[3]];const col=CN[w[1]]||w[1];const ax=X(a.x),ay=Y(a.y),bx=X(b.x),by=Y(b.y);
-    const mx=(ax+bx)/2,my=(ay+by)/2,dx=bx-ax,dy=by-ay,L=Math.hypot(dx,dy)||1,k=((i%3)-1)*.12+.08;const cx=mx-dy*k,cy=my+dx*k;
-    const sw=w[5]?2.6:1.6,dark=col==='#202124';
-    h+=`<path d="M${ax.toFixed(1)},${ay.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${bx.toFixed(1)},${by.toFixed(1)}" fill="none" stroke="#fff" stroke-width="${sw+2}"/><path d="M${ax.toFixed(1)},${ay.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${bx.toFixed(1)},${by.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${sw}" ${col==='#f4f4f4'?'stroke-dasharray="4 2"':''}/>`;
-    const sg=SIGN[w[1]];for(const [px,py] of [[ax,ay],[bx,by]]){h+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.4" fill="${col}" stroke="#111" stroke-width=".6"/>`;
-      if(sg==='+'||sg==='−')h+=`<text x="${(px+5).toFixed(1)}" y="${(py-4).toFixed(1)}" font-size="10" font-weight="700" fill="${sg==='+'?'#d7263d':'#111'}">${sg}</text>`}
-    let tx=(ax+2*cx+bx)/4,ty=(ay+2*cy+by)/4;const tw=w.tag.length*5.2+8;for(let k=0;k<14&&placed.some(r=>Math.abs(r[0]-tx)<(r[2]+tw)/2+1&&Math.abs(r[1]-ty)<13);k++)ty+=(k%2?-1:1)*13*Math.ceil((k+1)/2);placed.push([tx,ty,tw]);
-    tags+=`<rect x="${(tx-tw/2).toFixed(1)}" y="${(ty-6.5).toFixed(1)}" width="${tw.toFixed(1)}" height="12" rx="2" fill="#fff" stroke="${dark?'#111':col}" stroke-width="1"/><text x="${tx.toFixed(1)}" y="${(ty+3).toFixed(1)}" text-anchor="middle" font-size="8.5" font-weight="700" fill="#111">${esc(w.tag)}</text>`});
-  if(!segs.length)h+=`<text x="${X(0)}" y="${Y(y1-60)}" text-anchor="middle" font-size="12" fill="#5d6068">이 단계는 선을 잇지 않습니다.</text>`;
-  return `<div class="plan paper"><svg viewBox="0 0 ${(x1-x0).toFixed(0)} ${(y1-y0).toFixed(0)}" font-family="'Gmarket Sans','Apple SD Gothic Neo',sans-serif" role="img" aria-label="이 단계 평면 배선도">${h}${tags}</svg></div>
-  <div class="note">평면도는 1차 연결 책상 배치를 위에서 본 그림입니다. 진한 상자가 이 단계에 쓰는 부품, 점이 꽂는 자리, <b style="color:#d7263d">+</b> / <b>−</b>는 극성입니다. 하얀 점선은 흰 선입니다.</div>`}
-function tagTable(){return `<details><summary>꼬리표 이름표 전체 (${WL.filter(w=>w[0]!=='1').length + 1}개) — 선 양 끝에 같은 이름</summary>`+table(['꼬리표','한쪽 끝','다른 끝','색'],WL.map(w=>[w.tag,w[2].replace('.',' '),w[3].replace('.',' '),w[1].startsWith('#')?'회색':w[1]]),[0])+'</details>'}
+    const mx=(ax+bx)/2,my=(ay+by)/2,dx=bx-ax,dy=by-ay,k=((i%3)-1)*.1+.06;const cx=mx-dy*k,cy=my+dx*k;const sw=(w[5]?2.8:1.8)*sc;
+    const d=`M${ax.toFixed(1)},${ay.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${bx.toFixed(1)},${by.toFixed(1)}`;
+    h+=`<path d="${d}" fill="none" stroke="#fff" stroke-width="${(sw+2.4*sc).toFixed(1)}"/><path d="${d}" fill="none" stroke="${col}" stroke-width="${sw.toFixed(1)}" ${col==='#f4f4f4'?`stroke-dasharray="${fs(5)} ${fs(3)}"`:''}/>`;
+    for(const [px,py] of [[ax,ay],[bx,by]])h+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${fs(3.2)}" fill="${col}" stroke="#111" stroke-width="${fs(.7)}"/>`;
+    if(!badges.some(q=>q.n===w[0]&&Math.hypot(q.x-(ax+2*cx+bx)/4,q.y-(ay+2*cy+by)/4)<60*sc))badges.push({n:w[0],col,x:(ax+2*cx+bx)/4,y:(ay+2*cy+by)/4})});
+  // 번호 동그라미: 서로·부품 이름과 겹치지 않게 조금씩 밀기
+  const R=9*sc,placed=[];let bh='';
+  for(const q of badges){let tx=q.x,ty=q.y;const hit=(x,y)=>placed.some(p=>Math.hypot(p[0]-x,p[1]-y)<2*R+2*sc)||obst.some(o=>Math.abs(o[0]-x)<o[2]/2+R&&Math.abs(o[1]-y)<o[3]/2+R);
+    for(let k=1;k<40&&hit(tx,ty);k++){const ang=k*2.4,rr=R*(.9+k*.35);tx=q.x+Math.cos(ang)*rr;ty=q.y+Math.sin(ang)*rr}
+    placed.push([tx,ty]);const dark=q.col==='#202124'||q.col==='#f4f4f4';
+    if(Math.hypot(tx-q.x,ty-q.y)>R)bh+=`<line x1="${q.x.toFixed(1)}" y1="${q.y.toFixed(1)}" x2="${tx.toFixed(1)}" y2="${ty.toFixed(1)}" stroke="#111" stroke-width="${fs(.8)}"/>`;
+    bh+=`<circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="${R.toFixed(1)}" fill="#fff" stroke="${dark?'#111':q.col}" stroke-width="${fs(2)}"/><text x="${tx.toFixed(1)}" y="${(ty+3.6*sc).toFixed(1)}" text-anchor="middle" font-size="${fs(q.n.length>2?8:10)}" font-weight="700" fill="#111">${esc(q.n)}</text>`}
+  if(!segs.length)h+=`<text x="${(W/2).toFixed(0)}" y="${(H/2).toFixed(0)}" text-anchor="middle" font-size="${fs(13)}" fill="#5d6068">이 단계는 선을 잇지 않습니다.</text>`;
+  return `<div class="plan paper"><svg viewBox="0 0 ${W.toFixed(0)} ${H.toFixed(0)}" font-family="'Gmarket Sans','Apple SD Gothic Neo',sans-serif" role="img" aria-label="이 단계 평면 배선도">${h}${top}${bh}</svg></div>
+  <div class="note">위에서 본 책상 그림입니다. 굵은 테두리가 이 단계에 쓰는 부품, 동그라미 숫자가 선 번호입니다. 자세한 연결은 아래 목록에 있습니다. ${segs.length>12?'<button class="btn" data-a="zoomplan">크게 보기</button>':''}</div>`}
+function tagTable(){return `<details><summary>선 번호표 전체 — 선 양 끝에 번호 스티커만 붙이면 됩니다</summary>`+table(['번호','색','종류','한쪽 끝','다른 끝'],WL.map(w=>[w[0]+'번',CN[w[1]]?w[1]:'회색',wireKind(w[0]),korEnd(w[2]).text,korEnd(w[3]).text]),[])+'</details>'}
 // 단계를 바꾸면 그 단계 선으로 카메라 맞추기
 function fitStep(){if(!ready)return;const S=mode==='bench'?'bench':'asm';const ws=WM[S].filter(m=>S==='bench'?benchStepOfWire[m.userData.wire]===bCur:(wireStep[m.userData.wire]??9)===wCur);
   if(!ws.length){if(S==='bench')fitBench();else view('back');return}const b=new THREE.Box3();ws.forEach(m=>b.expandByObject(m));fitBox(b,S==='bench'?[0,1.1,.6]:[0,.15,-1],1.25)}
