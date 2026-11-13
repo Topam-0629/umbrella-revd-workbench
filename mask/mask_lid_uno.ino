@@ -11,9 +11,11 @@
 //   c : 가운데 90° (혼 달기 전에 한 번)
 //   o / x : 열기 / 닫기
 //   + / - : 지금 각도에서 2°씩
-//   C / O : 지금 각도를 닫힘 / 열림으로 (전원 끄면 사라짐 → 숫자를 메모해서 아래에 넣기)
+//   C / O : 지금 각도를 닫힘 / 열림으로 저장 (우노 안에 저장돼서 전원을 꺼도 남는다)
+//   R : 저장한 각도 지우고 처음 값(90 / 0)으로
 
 #include <Servo.h>
+#include <EEPROM.h>
 
 const int SERVO_PIN = 9;
 
@@ -54,6 +56,9 @@ void servoSlow(int to) {          // 천천히 (쾅 닫히지 않게)
 void openLid()  { isOpen = true;  Serial.println(F("열기")); servoSlow(openDeg);   tMark = millis(); }
 void closeLid() { isOpen = false; Serial.println(F("닫기")); servoSlow(closedDeg); tMark = millis(); }
 
+void saveDeg() { EEPROM.update(0, 0xA5); EEPROM.update(1, closedDeg); EEPROM.update(2, openDeg); }
+void loadDeg() { if (EEPROM.read(0) == 0xA5) { closedDeg = EEPROM.read(1); openDeg = EEPROM.read(2); } }
+
 void menu() {
   Serial.println();
   Serial.println(F("== 마스크통 자동 뚜껑 (우노) =="));
@@ -61,12 +66,13 @@ void menu() {
   Serial.print(F(", 열림 ")); Serial.print(openDeg);
   Serial.print(F(", 자동 ")); Serial.println(autoOn ? F("켜짐") : F("멈춤"));
   Serial.println(F("s 자동 켜기/멈춤 | c 가운데 | o 열기 | x 닫기 | + - 2도씩"));
-  Serial.println(F("C 지금=닫힘 | O 지금=열림"));
+  Serial.println(F("C 지금=닫힘 저장 | O 지금=열림 저장 | R 처음 값"));
 }
 
 void setup() {
   Serial.begin(9600);
   delay(300);
+  loadDeg();
   menu();
   servoGo(closedDeg, 800);       // 켜자마자 한 번 움직여서 살아 있는지 보여 준다
   tMark = millis();
@@ -82,8 +88,9 @@ void loop() {
       case 'x': closeLid(); break;
       case '+': servoGo(nowDeg + 2, 300); break;
       case '-': servoGo(nowDeg - 2, 300); break;
-      case 'C': closedDeg = nowDeg; Serial.print(F("닫힘 = ")); Serial.println(closedDeg); break;
-      case 'O': openDeg = nowDeg;   Serial.print(F("열림 = ")); Serial.println(openDeg); break;
+      case 'C': closedDeg = nowDeg; saveDeg(); Serial.print(F("닫힘 저장 = ")); Serial.println(closedDeg); break;
+      case 'O': openDeg = nowDeg;   saveDeg(); Serial.print(F("열림 저장 = ")); Serial.println(openDeg); break;
+      case 'R': closedDeg = 90; openDeg = 0; EEPROM.update(0, 0); Serial.println(F("처음 값으로")); break;
       case '\n': case '\r': break;
       default: menu();
     }
