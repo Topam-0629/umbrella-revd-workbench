@@ -31,6 +31,8 @@ header{display:flex;align-items:flex-end;gap:8px 24px;flex-wrap:wrap;padding-lef
 nav{display:flex;gap:2px;margin-left:auto;overflow-x:auto;max-width:100%}
 nav button{padding:8px 11px 10px;font-weight:700;font-size:14px;color:var(--sub);border-bottom:2px solid transparent;white-space:nowrap}
 nav button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
+nav a.navlink{padding:8px 11px 10px;font-weight:700;font-size:14px;color:var(--accent);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;margin-left:8px;border-left:1px solid var(--line)}
+nav a.navlink:hover{border-bottom-color:var(--accent)}
 .main{flex:1;min-height:0;display:grid;grid-template-rows:minmax(240px,48%) 1fr}
 @media (min-width:900px) and (orientation:landscape){.main{grid-template-rows:none;grid-template-columns:minmax(0,1.3fr) minmax(360px,1fr)}.viewer{border-bottom:0!important;border-right:1px solid var(--line)}}
 .viewer{position:relative;min-height:0;border-bottom:1px solid var(--line);touch-action:none;background:var(--bg)}
@@ -206,6 +208,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       <button role="tab" data-t="anim" aria-selected="false">작동</button>
       <button role="tab" data-t="test" aria-selected="false">전원 시험</button>
       <button role="tab" data-t="screen" aria-selected="false">화면 앱</button>
+      <a class="navlink" href="mask.html">마스크통</a>
     </nav>
   </header>
   <div class="main">
