@@ -71,6 +71,20 @@ ol.tight{margin-top:12px;font-size:13px}
 .prog{font-size:12.5px;color:var(--sub);margin-top:10px}
 .memo{display:flex;gap:16px;flex-wrap:wrap;font-size:13.5px;font-weight:700}
 .memo input{width:64px;font:inherit;font-variant-numeric:tabular-nums;border:1.5px solid var(--fg);background:var(--bg);color:var(--fg);padding:6px 8px;border-radius:3px;margin:0 4px}
+.steps{display:flex;flex-direction:column;gap:10px}
+.st{border:1px solid var(--line);border-radius:4px;background:var(--bg)}
+.st .sh{display:grid;grid-template-columns:20px auto minmax(0,1fr);gap:10px;align-items:center;padding:11px 12px;cursor:pointer}
+.st .sh input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
+.st .no{font-size:12px;font-weight:700;color:var(--on-accent);background:var(--accent);padding:2px 6px;border-radius:2px;font-variant-numeric:tabular-nums}
+.st .tt{font-weight:700;font-size:14.5px}
+.st .sb{padding:0 12px 12px 42px;display:flex;flex-direction:column;gap:8px}
+.st .sb ol{font-size:13px;gap:5px}
+.st .need{margin:0;font-size:12px;font-weight:700;color:var(--sub)}
+.st dl{display:grid;grid-template-columns:52px minmax(0,1fr);gap:4px 8px;margin:0;font-size:12.5px;line-height:1.6;border-top:1px dashed var(--line);padding-top:8px}
+.st dt{font-weight:700;color:var(--sub)}.st dd{margin:0}
+.st.done{background:var(--panel)}.st.done .sb{display:none}.st.done .tt{color:var(--sub);text-decoration:line-through}.st.done .no{background:var(--sub)}
+.prog{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;color:var(--sub)}
+.pbar{flex:1;height:4px;background:var(--line);border-radius:2px;overflow:hidden}.pbar i{display:block;height:100%;background:var(--accent)}
 </style>
 <div class="app">
   <div class="view">
@@ -89,144 +103,114 @@ ol.tight{margin-top:12px;font-size:13px}
     <div class="head">
       <a class="back" href="https://topam-0629.github.io/umbrella-revd-workbench/">← 우산통 작업대</a>
       <h1>마스크통 서보 뚜껑</h1>
-      <p class="lead">이미 뽑은 마스크통(220 × 130 × 50 mm)에 붙이는 부품입니다. 서보가 경첩 축이 되어 뚜껑을 뒤로 100°까지 엽니다. 앞면 버튼을 누르면 열리고, 한 번 더 누르면 닫힙니다. 우산통 ESP32 하나로 함께 움직입니다.</p>
+      <p class="lead">마스크통 앞 버튼을 누르면 뚜껑이 열리고, 한 번 더 누르면 닫힙니다. 우산통 ESP32에 선 5가닥만 더 잇습니다. 탭 순서대로 따라 하세요.</p>
     </div>
     <nav class="tabs" role="tablist">
-      <button role="tab" data-t="parts" aria-selected="true">부품·출력</button>
-      <button role="tab" data-t="asm" aria-selected="false">조립</button>
-      <button role="tab" data-t="wire" aria-selected="false">우산통과 연결</button>
-      <button role="tab" data-t="test" aria-selected="false">시험</button>
+      <button role="tab" data-t="parts" aria-selected="true">① 준비물</button>
+      <button role="tab" data-t="asm" aria-selected="false">② 조립</button>
+      <button role="tab" data-t="wire" aria-selected="false">③ 선 잇기</button>
+      <button role="tab" data-t="test" aria-selected="false">④ 시험·마무리</button>
     </nav>
 
     <div class="tp" id="t-parts">
       <section>
-        <h2>부품 (누르면 3D에서 강조)</h2>
-        <div class="parts" id="parts"></div>
+        <h2>출력할 것 4개</h2>
+        <div class="tbl"><table>
+          <thead><tr><th>파일</th><th>시간</th></tr></thead>
+          <tbody>
+            <tr><td><a href="https://topam-0629.github.io/umbrella-revd-workbench/mask/lid.stl" download="뚜껑.stl">뚜껑.stl</a></td><td class="n">2시간 55분</td></tr>
+            <tr><td><a href="https://topam-0629.github.io/umbrella-revd-workbench/mask/servo_bracket.stl" download="오른쪽_서보받침.stl">오른쪽_서보받침.stl</a></td><td class="n">30분</td></tr>
+            <tr><td><a href="https://topam-0629.github.io/umbrella-revd-workbench/mask/hinge_bracket.stl" download="왼쪽_경첩받침.stl">왼쪽_경첩받침.stl</a></td><td class="n">14분</td></tr>
+            <tr><td><a href="https://topam-0629.github.io/umbrella-revd-workbench/mask/button_bracket.stl" download="버튼받침.stl">버튼받침.stl</a></td><td class="n">35분</td></tr>
+            <tr><td><a href="https://topam-0629.github.io/umbrella-revd-workbench/mask/plate4.3mf" download="한판_4개.3mf">한판_4개.3mf</a> (4개 한 번에)</td><td class="n">4시간 10분</td></tr>
+          </tbody></table></div>
+        <p class="note">방향은 파일에 맞춰져 있습니다. PLA · 0.20 mm · 채움 15% · 지지대 없음 · 브림 5 mm. 3개를 이미 뽑았다면 버튼받침만 뽑으세요.</p>
       </section>
       <section>
-        <h2>출력 파일</h2>
+        <h2>사야 하는 것</h2>
         <div class="tbl"><table>
-          <thead><tr><th>파일</th><th>크기 (mm)</th><th>시간</th></tr></thead>
+          <thead><tr><th>부품</th><th>개수</th></tr></thead>
           <tbody>
-            <tr><td><a href="https://topam-0629.github.io/umbrella-revd-workbench/mask/lid.stl" download="뚜껑.stl">뚜껑.stl</a></td><td class="n">239 × 145 × 26</td><td class="n">2시간 55분</td></tr>
-            <tr><td><a href="https://topam-0629.github.io/umbrella-revd-workbench/mask/servo_bracket.stl" download="오른쪽_서보받침.stl">오른쪽_서보받침.stl</a></td><td class="n">46 × 64 × 23</td><td class="n">30분</td></tr>
-            <tr><td><a href="https://topam-0629.github.io/umbrella-revd-workbench/mask/hinge_bracket.stl" download="왼쪽_경첩받침.stl">왼쪽_경첩받침.stl</a></td><td class="n">43 × 46 × 7</td><td class="n">14분</td></tr>
-            <tr><td><a href="https://topam-0629.github.io/umbrella-revd-workbench/mask/button_bracket.stl" download="버튼받침.stl">버튼받침.stl</a> <span class="new">새로</span></td><td class="n">50 × 34 × 28</td><td class="n">35분</td></tr>
-            <tr><td><a href="https://topam-0629.github.io/umbrella-revd-workbench/mask/plate4.3mf" download="한판_4개.3mf">한판_4개.3mf</a></td><td class="n">4개 한 판</td><td class="n">4시간 10분</td></tr>
+            <tr><td>서보 SG90 (MG90S도 됨). 상자 안 혼·나사 포함</td><td class="n">1</td></tr>
+            <tr><td>12 mm 판넬 푸시버튼, 누를 때만 연결(순간형)</td><td class="n">1</td></tr>
+            <tr><td>듀퐁선 수-암 40 cm</td><td class="n">3</td></tr>
+            <tr><td>듀퐁선 암-암 40 cm</td><td class="n">2</td></tr>
+            <tr><td>M3 × 10 셀프탭 나사</td><td class="n">4</td></tr>
+            <tr><td>M3 × 16 셀프탭 나사</td><td class="n">2</td></tr>
+            <tr><td>M3 × 12 볼트</td><td class="n">1</td></tr>
+            <tr><td>M2 × 6 나사</td><td class="n">2</td></tr>
+            <tr><td>수축튜브 또는 절연테이프</td><td class="n">조금</td></tr>
           </tbody></table></div>
-        <p class="note">모든 파일은 놓는 방향이 이미 맞춰져 있어 그대로 올리면 됩니다. PLA · 층 0.20 mm · 벽 3 · 채움 15% · 지지대 없음 · 브림 5 mm. 4개 한 판은 앞뒤로 판 끝까지 쓰니 부품을 옮기지 마세요. 이미 3개를 뽑았다면 버튼받침만 뽑으면 됩니다.</p>
+        <p class="note">우산통 나사는 여유가 거의 없으니(M3×16 여유 0, M3×10 여유 2) 따로 사세요. WAGO는 우산통에서 다 써서 남는 게 없고, 이 방법은 WAGO가 필요 없습니다.</p>
+      </section>
+      <section>
+        <h2>도구</h2>
+        <p class="note">2.5 mm 드릴 날, 드라이버(+), 납땜인두, 와이어 스트리퍼, 멀티미터, 연필, 마스킹테이프</p>
+      </section>
+      <section>
+        <h2>부품 보기 (누르면 3D에서 강조)</h2>
+        <div class="parts" id="parts"></div>
       </section>
     </div>
 
     <div class="tp" id="t-asm" hidden>
-      <section>
-        <h2>뚜껑 조립</h2>
-        <ol>
-          <li>서보를 가운데(90°)로 돌려 둡니다. 시험 탭 <b>M-4</b>에서 <span class="mono">c</span>를 보내면 됩니다.</li>
-          <li>서보에 들어 있는 외팔 혼을 뚜껑 오른쪽 팔의 홈에 끼우고, 바깥에서 M2 × 6 나사 2개로 고정합니다.</li>
-          <li>서보를 서보 받침 구멍에 몸통부터 넣고, 날개를 서보 나사 2개로 고정합니다. SG90은 조금 헐렁해도 괜찮습니다.</li>
-          <li>서보 받침은 마스크통 오른쪽 면, 경첩 받침은 왼쪽 면에 댑니다. 구멍 자리에 2.5 mm 드릴로 깊이 8 mm 구멍을 내고 M3 × 10 셀프탭으로 조입니다.</li>
-          <li>뚜껑을 덮으면서 혼 가운데를 서보 축에 끼우고, 뚜껑 팔의 큰 구멍으로 혼 나사를 넣어 조입니다.</li>
-          <li>왼쪽은 M3 × 12 볼트를 뚜껑 팔 바깥에서 넣어 경첩 받침에 조입니다. 손으로 뚜껑이 부드럽게 돌 정도까지만 조입니다.</li>
-        </ol>
-      </section>
-      <section>
-        <h2>버튼 조립</h2>
-        <ol>
-          <li>버튼 다리 2개에 듀퐁 선(한쪽 벗김)을 납땜하고 수축튜브로 감쌉니다. 납땜이 싫으면 처음부터 선이 달린 버튼을 사세요.</li>
-          <li>버튼을 버튼 받침 앞 구멍에 넣고, 안쪽에서 너트로 조입니다. 선은 아래쪽 작은 구멍으로 뺍니다.</li>
-          <li>버튼 받침을 마스크통 앞면 오른쪽에 댑니다(버튼 중심이 바닥에서 24 mm, 오른쪽 끝에서 34 mm). 2.5 mm 드릴로 깊이 8 mm 구멍 2개를 내고 M3 × 16 셀프탭으로 조입니다. 앞벽이 10 mm로 꽉 차 있어 단단히 잡힙니다.</li>
-        </ol>
-      </section>
+      <p class="note">뚜껑은 아직 올리지 않습니다. 서보 각도를 맞춘 뒤 ④에서 올립니다.</p>
+      <div class="steps" data-g="asm"></div>
     </div>
 
     <div class="tp" id="t-wire" hidden>
       <section>
-        <h2>우산통에 더 필요한 것</h2>
-        <div class="tbl"><table>
-          <thead><tr><th>부품</th><th>개수</th><th>쓰는 곳</th></tr></thead>
-          <tbody>
-            <tr><td>서보 SG90 (또는 MG90S)</td><td class="n">1</td><td>뚜껑 축</td></tr>
-            <tr><td>12 mm 판넬 푸시버튼 (누를 때만 연결)</td><td class="n">1</td><td>앞면 버튼</td></tr>
-            <tr><td>WAGO 3구멍 단자 (221-413)</td><td class="n">1</td><td>새 5V 단자 <b>V2</b></td></tr>
-            <tr><td>AWG18 빨강 10 cm</td><td class="n">1</td><td>LM-B 출력 + → V2</td></tr>
-            <tr><td>듀퐁 수-암 40 cm</td><td class="n">3</td><td>서보 선 늘이기 (수 쪽을 서보 커넥터에)</td></tr>
-            <tr><td>듀퐁 암 40 cm (한쪽 벗김)</td><td class="n">2</td><td>버튼 → ESP32, 접지</td></tr>
-            <tr><td>M3 × 10 셀프탭</td><td class="n">4</td><td>서보·경첩 받침</td></tr>
-            <tr><td>M3 × 16 셀프탭</td><td class="n">2</td><td>버튼 받침</td></tr>
-            <tr><td>M3 × 12 볼트, M2 × 6 나사</td><td class="n">1, 2</td><td>경첩 핀, 혼 고정</td></tr>
-            <tr><td>수축튜브 또는 절연테이프</td><td class="n">조금</td><td>버튼 납땜 자리, 선 이음</td></tr>
-          </tbody></table></div>
-        <p class="note">40 cm는 마스크통을 우산통 바로 옆에 둘 때 길이입니다. 놓을 자리까지 재고 20 cm 여유를 두세요. 모자라면 듀퐁선 두 개를 이어 씁니다.</p>
-      </section>
-      <section>
-        <h2>왜 새 단자가 필요한가요</h2>
-        <div class="box">5V 나눔 단자 <b>V1</b>은 다섯 구멍이 다 찼고(LM-A, ESP32, 거리 센서 2개, 사람 감지 센서), ESP32와 같은 전원이라 서보가 움직일 때 ESP32가 꺼질 수 있습니다. 그래서 소리 모듈만 쓰고 있는 <b>LM-B</b>(두 번째 5V 변환기)에서 새로 나눕니다. 접지도 신호 접지 대신 전원 쪽 접지 <b>G2</b>의 빈 구멍에 이어서, 서보 전류가 센서 쪽 선을 지나지 않게 합니다.</div>
-      </section>
-      <section>
         <h2>잇는 그림</h2>
-        <div class="wire-svg"><svg viewBox="0 0 360 400" width="100%" role="img" aria-label="우산통 전자판과 서보·버튼을 잇는 그림" xmlns="http://www.w3.org/2000/svg">
-<style>.b{fill:var(--panel);stroke:var(--fg);stroke-width:1.5}.bn{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5}.t{font:700 12px var(--f);fill:var(--fg)}.s{font:500 10.5px var(--f);fill:var(--sub)}.h{fill:var(--bg);stroke:var(--fg);stroke-width:1.2}.w{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.lb{font:700 10.5px var(--f);fill:var(--fg)}</style>
-<text class="s" x="10" y="14">우산통 전자판</text><text class="s" x="250" y="14">마스크통</text>
-<rect class="b" x="10" y="24" width="130" height="40" rx="3"/><text class="t" x="20" y="42">LM-B 5V 출력</text><text class="s" x="20" y="56">두 번째 변환기 + 나사</text>
-<rect class="bn" x="10" y="84" width="130" height="78" rx="3"/><text class="t" x="20" y="102">V2 새 5V 단자</text>
-<circle class="h" cx="34" cy="132" r="6"/><circle class="h" cx="74" cy="132" r="6"/><circle class="h" cx="114" cy="132" r="6"/>
-<text class="s" x="22" y="152">LM-B</text><text class="s" x="62" y="152">소리</text><text class="s" x="102" y="152">서보</text>
-<rect class="b" x="10" y="182" width="130" height="44" rx="3"/><text class="t" x="20" y="200">G2 전원 쪽 접지</text><text class="s" x="20" y="216">다섯째 빈 구멍</text><circle class="h" cx="124" cy="204" r="6"/>
-<rect class="b" x="10" y="246" width="130" height="44" rx="3"/><text class="t" x="20" y="264">L3 신호 접지</text><text class="s" x="20" y="280">셋째 빈 구멍</text><circle class="h" cx="124" cy="268" r="6"/>
-<rect class="b" x="10" y="310" width="130" height="78" rx="3"/><text class="t" x="20" y="328">ESP32</text>
-<circle class="h" cx="124" cy="350" r="5"/><text class="s" x="76" y="354">15번 핀</text><circle class="h" cx="124" cy="372" r="5"/><text class="s" x="76" y="376">12번 핀</text>
-<rect class="b" x="240" y="120" width="110" height="110" rx="3"/><text class="t" x="252" y="140">서보 SG90</text>
-<text class="s" x="252" y="164">빨강 5V</text><text class="s" x="252" y="190">갈색 접지</text><text class="s" x="252" y="216">주황 신호</text>
-<rect class="b" x="240" y="290" width="110" height="80" rx="3"/><text class="t" x="252" y="310">버튼</text><text class="s" x="252" y="336">다리 1</text><text class="s" x="252" y="358">다리 2</text>
-<path class="w" stroke="#d6453d" d="M34 64 V126"/><text class="lb" x="40" y="80">M1</text>
-<path class="w" stroke="#d6453d" d="M120 132 H190 V160 H240"/><text class="lb" x="196" y="154">M3</text>
-<path class="w" stroke="#8a5a3c" d="M130 204 H200 V186 H240"/><text class="lb" x="168" y="198">M4</text>
-<path class="w" stroke="#e8902c" d="M129 350 H210 V212 H240"/><text class="lb" x="214" y="240">M5</text>
-<path class="w" stroke="var(--accent)" d="M129 372 H226 V332 H240"/><text class="lb" x="160" y="366">M6</text>
-<path class="w" stroke="var(--fg)" d="M130 268 H170 V292 H232 V354 H240"/><text class="lb" x="176" y="286">M7</text>
+        <div class="wire-svg"><svg viewBox="0 0 360 330" width="100%" role="img" aria-label="우산통 전자판과 서보·버튼을 잇는 그림" xmlns="http://www.w3.org/2000/svg">
+<style>.b{fill:var(--panel);stroke:var(--fg);stroke-width:1.5}.t{font:700 12px var(--f);fill:var(--fg)}.s{font:500 10.5px var(--f);fill:var(--sub)}.h{fill:var(--bg);stroke:var(--fg);stroke-width:1.2}.w{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.lb{font:700 11px var(--f);fill:var(--fg)}</style>
+<text class="s" x="10" y="14">우산통 안 (이미 있는 것)</text><text class="s" x="244" y="14">마스크통</text>
+<rect class="b" x="10" y="24" width="140" height="96" rx="3"/><text class="t" x="20" y="44">LM-B (두 번째 5V 변환기)</text>
+<text class="s" x="20" y="62">소리 모듈 선 옆에 같이</text>
+<rect class="h" x="96" y="72" width="16" height="16"/>
+<rect class="h" x="96" y="96" width="16" height="16"/>
+<text class="s" x="20" y="84">출력 +</text><text class="s" x="20" y="108">출력 −</text>
+<rect class="b" x="10" y="140" width="140" height="48" rx="3"/><text class="t" x="20" y="160">L3 신호 접지 (WAGO)</text><text class="s" x="20" y="176">셋째 구멍 (원래 예비)</text><circle class="h" cx="134" cy="170" r="6"/>
+<rect class="b" x="10" y="208" width="140" height="80" rx="3"/><text class="t" x="20" y="228">ESP32</text>
+<circle class="h" cx="134" cy="252" r="5"/><text class="s" x="80" y="256">15번 핀</text><circle class="h" cx="134" cy="274" r="5"/><text class="s" x="80" y="278">12번 핀</text>
+<rect class="b" x="244" y="40" width="106" height="100" rx="3"/><text class="t" x="256" y="60">서보 SG90</text>
+<text class="s" x="256" y="82">빨강</text><text class="s" x="256" y="104">갈색</text><text class="s" x="256" y="126">주황</text>
+<rect class="b" x="244" y="210" width="106" height="78" rx="3"/><text class="t" x="256" y="230">버튼</text><text class="s" x="256" y="256">다리 1</text><text class="s" x="256" y="278">다리 2</text>
+<path class="w" stroke="#d6453d" d="M112 80 H244"/><text class="lb" x="176" y="73">M1</text>
+<path class="w" stroke="#8a5a3c" d="M112 104 H244"/><text class="lb" x="176" y="97">M2</text>
+<path class="w" stroke="#e8902c" d="M139 252 H200 V126 H244"/><text class="lb" x="206" y="150">M3</text>
+<path class="w" stroke="var(--accent)" d="M139 274 H244"/><text class="lb" x="168" y="268">M4</text>
+<path class="w" stroke="var(--fg)" d="M140 170 H222 V252 H244"/><text class="lb" x="168" y="164">M5</text>
 </svg>
 </div>
       </section>
       <section>
-        <h2>선 하나씩</h2>
+        <h2>선 5가닥</h2>
         <div class="tbl"><table>
-          <thead><tr><th>번호</th><th>어디서</th><th>어디로</th><th>선</th></tr></thead>
+          <thead><tr><th>번호</th><th>마스크통 쪽</th><th>우산통 쪽</th></tr></thead>
           <tbody>
-            <tr><td class="n">M1</td><td>LM-B 출력 + 나사</td><td>V2 첫째 구멍</td><td>AWG18 빨강 10 cm</td></tr>
-            <tr><td class="n">M2</td><td>소리 모듈 VCC 선 (26번)</td><td>LM-B 출력 + 나사에서 빼서 V2 둘째 구멍으로</td><td>있던 선 옮기기</td></tr>
-            <tr><td class="n">M3</td><td>서보 빨강</td><td>V2 셋째 구멍</td><td>듀퐁 수 → 끝 벗김</td></tr>
-            <tr><td class="n">M4</td><td>서보 갈색</td><td>G2 다섯째(빈) 구멍</td><td>듀퐁 수 → 끝 벗김</td></tr>
-            <tr><td class="n">M5</td><td>서보 주황</td><td>ESP32 15번 핀</td><td>듀퐁 수-암</td></tr>
-            <tr><td class="n">M6</td><td>버튼 다리 하나</td><td>ESP32 12번 핀</td><td>듀퐁 암</td></tr>
-            <tr><td class="n">M7</td><td>버튼 다른 다리</td><td>L3 셋째(빈) 구멍</td><td>끝 벗김</td></tr>
+            <tr><td class="n">M1</td><td>서보 빨강</td><td>LM-B 출력 <b>+</b> 나사 (소리 모듈 선과 함께)</td></tr>
+            <tr><td class="n">M2</td><td>서보 갈색</td><td>LM-B 출력 <b>−</b> 나사 (소리 모듈 선과 함께)</td></tr>
+            <tr><td class="n">M3</td><td>서보 주황</td><td>ESP32 15번 핀</td></tr>
+            <tr><td class="n">M4</td><td>버튼 다리 하나</td><td>ESP32 12번 핀</td></tr>
+            <tr><td class="n">M5</td><td>버튼 다른 다리</td><td>L3 셋째 구멍 (원래 예비)</td></tr>
           </tbody></table></div>
-        <ol class="tight">
-          <li>V2는 아래 전자판 LM-B 옆 빈 자리에 폼 테이프로 붙입니다.</li>
-          <li>서보·버튼 선 5가닥은 한데 묶어서 어댑터 선이 나가는 뒤 아래 홈으로 함께 뺍니다.</li>
-          <li>꼬리표에 M1~M7 번호를 적어 양 끝에 붙입니다.</li>
-          <li>12번 핀은 ESP32를 켤 때 전기가 들어가 있으면 안 되는 핀입니다. 버튼은 접지에만 이어지므로 안전하지만, 이 핀에 5V나 3.3V를 절대 잇지 마세요.</li>
-        </ol>
+        <p class="note">서보 전원을 LM-B에서 받는 이유: ESP32 쪽 5V(V1)는 구멍이 다 찼고, 같은 전원을 쓰면 서보가 움직일 때 ESP32가 꺼질 수 있습니다. LM-B는 지금 소리 모듈만 쓰고 있어 힘이 남습니다.</p>
       </section>
+      <div class="steps" data-g="wire"></div>
     </div>
 
     <div class="tp" id="t-test" hidden>
-      <section>
-        <p class="note">우산통 전원 시험 S0~S8을 끝낸 뒤에 합니다. 시험 코드는 <a href="https://topam-0629.github.io/umbrella-revd-workbench/mask/mask_lid_test.ino" download="mask_lid_test.ino">mask_lid_test.ino</a>입니다. 추가 라이브러리 없이 올리고, 시리얼 모니터는 115200, 줄 끝은 "새 줄"로 맞춥니다. 체크한 것은 이 기기에만 저장됩니다.</p>
-      </section>
-      <section>
-        <div class="checks" id="checks"></div>
-      </section>
+      <p class="note">우산통 전원 시험 S0~S8을 끝낸 뒤에 합니다. 시험 코드: <a href="https://topam-0629.github.io/umbrella-revd-workbench/mask/mask_lid_test.ino" download="mask_lid_test.ino">mask_lid_test.ino</a> (추가 라이브러리 없음). 시리얼 모니터 115200, 줄 끝 "새 줄".</p>
+      <div class="steps" data-g="test"></div>
       <section>
         <h2>찾은 각도 메모</h2>
         <div class="memo">
           <label>닫힘 <input id="mClose" inputmode="numeric" placeholder="예: 92">°</label>
           <label>열림 <input id="mOpen" inputmode="numeric" placeholder="예: 4">°</label>
         </div>
-        <p class="note">찾은 숫자를 코드 맨 위 <span class="mono">closedDeg</span>와 <span class="mono">openDeg</span>에 넣고 다시 올리면, 전원을 껐다 켜도 그대로입니다.</p>
       </section>
       <section>
-        <h2>버튼 부분만 (우산통 코드에 합칠 때)</h2>
+        <h2>우산통 코드에 합칠 때 (나중에)</h2>
         <pre class="code">const int SERVO_PIN = 15, BTN_PIN = 12;
 int closedDeg = 90, openDeg = 0;   // 메모한 각도
 bool isOpen = false;
@@ -252,10 +236,11 @@ if (digitalRead(BTN_PIN) == LOW) {
     while (digitalRead(BTN_PIN) == LOW) delay(10);
   }
 }</pre>
-        <p class="note" style="margin-top:8px">서보가 움직이는 0.7초 동안은 다른 일이 멈춥니다. 우산통 액추에이터가 움직이는 중에는 버튼을 무시하게 해 두면 안전합니다.</p>
+        <p class="note" style="margin-top:8px">서보가 움직이는 0.7초 동안 다른 일은 멈춥니다. 액추에이터가 움직이는 중에는 버튼을 무시하게 해 두세요.</p>
       </section>
     </div>
   </aside>
+
 
 </div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
@@ -331,23 +316,56 @@ function showTab(t){tabs.forEach(b=>b.setAttribute('aria-selected',b.dataset.t==
 tabs.forEach(b=>b.onclick=()=>showTab(b.dataset.t));
 let t0='parts';try{t0=localStorage.getItem('mask-tab')||t0}catch(e){}
 if(['parts','asm','wire','test'].includes(location.hash.slice(1)))t0=location.hash.slice(1);showTab(t0);
-// 시험 체크
-const CK=[
- ['M-1','전원 끈 채 통전','멀티미터 삐 모드로 V2 첫째 구멍 ↔ LM-B 출력 +, 그리고 V2 ↔ G2','앞은 삐, 뒤는 소리 없음','V2 ↔ G2가 삐면 M1이 출력 − 나사에 물렸습니다'],
- ['M-2','전원 켬, 서보·버튼 아직 안 꽂음','V2 ↔ G2 전압. 우산통 시험 코드에서 d로 소리','5.00 ± 0.05 V, 소리 남','소리가 안 나면 M2(소리 모듈 선)를 V2에 다시 끼웁니다'],
- ['M-3','버튼','mask_lid_test 올리고 b, 10초 동안 몇 번 누름','누를 때마다 「눌림」','0번이면 M6·M7. 안 눌러도 계속 뜨면 12번 핀 대신 옆 핀에 꽂은 것'],
- ['M-4','서보 가운데 (혼 없이)','서보 꽂고 c','한 번 돌고 조용히 멈춤, ESP32 재시작 없음','재시작하면 M3·M4 확인. 안 움직이면 M5가 15번 핀인지'],
- ['M-5','뚜껑 달고 각도 찾기','조립 5·6단계 → + / - 로 닫힘 자리 → C, 열림 자리 → O','닫힐 때 상자에 닿기 2° 전, 열림은 100° 근처','반대로 움직이면 닫힘·열림 숫자를 서로 바꿉니다'],
- ['M-6','10번 여닫기','r','걸림 없음, 재시작 없음, 서보 미지근','중간에 멈추면 경첩 볼트를 반 바퀴 풉니다'],
- ['M-7','버튼으로 실제 사용','아무 명령 없이 버튼 5번','누를 때마다 열림 ↔ 닫힘','두 번씩 움직이면 버튼을 길게 누른 것. 30 → 60으로'],
-];
-let st={};try{st=JSON.parse(localStorage.getItem('mask-checks')||'{}')}catch(e){}
-function save(){try{localStorage.setItem('mask-checks',JSON.stringify(st))}catch(e){}}
-function renderCk(){const n=CK.filter(c=>st[c[0]]).length;
- $('#checks').innerHTML=CK.map(c=>`<label class="ck ${st[c[0]]?'done':''}"><input type="checkbox" data-k="${c[0]}" ${st[c[0]]?'checked':''}><span><span class="no">${c[0]}</span><div class="tt">${c[1]}</div><dl><dt>하기</dt><dd>${c[2]}</dd><dt>정상</dt><dd>${c[3]}</dd><dt>안 되면</dt><dd>${c[4]}</dd></dl></span></label>`).join('')+`<div class="prog">${n} / ${CK.length} 끝</div>`}
-$('#checks').addEventListener('change',e=>{const k=e.target.dataset.k;if(!k)return;st[k]=e.target.checked;save();renderCk()});
+// 단계 (한 단계 = 한 가지 일)
+const STEPS={
+asm:[
+ {t:'출력물 확인',d:['4개가 다 있는지 봅니다: 뚜껑, 서보 받침, 경첩 받침, 버튼 받침.','브림과 실밥을 칼로 떼어 냅니다.','버튼을 버튼 받침 앞 구멍에 넣어 봅니다. 빡빡하면 구멍 안쪽을 사포로 다듬습니다.']},
+ {t:'버튼에 선 달기',need:'듀퐁선 암-암 2가닥, 수축튜브',d:['듀퐁선 2가닥의 한쪽 끝 커넥터를 잘라 내고 피복을 5 mm 벗깁니다. 반대쪽 암 커넥터는 그대로 둡니다.','수축튜브를 먼저 선에 끼워 둡니다.','벗긴 끝을 버튼 다리 2개에 하나씩 납땜합니다. 어느 다리든 상관없습니다.','수축튜브를 납땜 자리로 내리고 인두 옆면으로 데워 줄입니다.']},
+ {t:'버튼을 받침에 끼우기',d:['버튼의 너트를 풀어 뺍니다.','선부터 받침 안쪽으로 넣고, 버튼을 앞 구멍으로 밀어 넣습니다.','안쪽에서 너트를 끼워 손으로 조입니다.','선 2가닥을 받침 아래쪽 작은 구멍으로 뺍니다.']},
+ {t:'버튼 받침 자리 표시',d:['버튼 받침을 마스크통 <b>앞면 오른쪽</b>에 댑니다. 나사 구멍 있는 날개의 오른쪽 끝이 마스크통 오른쪽 끝에서 9 mm 안쪽, 받침 아랫면이 바닥에서 7 mm 위입니다.','마스킹테이프로 잠시 붙입니다.','나사 구멍 2개 안에 연필로 점을 찍고 받침을 뗍니다.']},
+ {t:'버튼 받침 붙이기',need:'M3 × 16 셀프탭 2개',d:['점 2곳에 2.5 mm 드릴로 깊이 8 mm 구멍을 냅니다. 드릴 날에 테이프로 8 mm 표시를 해 두면 편합니다.','받침을 다시 대고 M3 × 16을 손으로 조입니다. 전동 드라이버는 쓰지 않습니다.','받침을 흔들어 보고 움직이지 않으면 끝.']},
+ {t:'경첩 받침 붙이기 (왼쪽 면)',need:'M3 × 10 셀프탭 2개',d:['경첩 받침을 마스크통 <b>왼쪽 면 뒤쪽</b>에 댑니다. 받침 뒤 끝을 마스크통 뒷면 끝에 맞추고, 아랫면은 바닥에서 10 mm 위입니다. 둥근 귀가 뒤 위로 튀어나옵니다.','3D에서 「받침만 보기」를 켜면 자리가 잘 보입니다.','구멍 자리 표시 → 2.5 mm 드릴, 깊이 8 mm → M3 × 10으로 조입니다.']},
+ {t:'서보 받침 붙이기 (오른쪽 면)',need:'M3 × 10 셀프탭 2개',d:['서보 받침을 마스크통 <b>오른쪽 면 뒤쪽</b>에 댑니다. 마스크통 뒷면 끝에 맞추고, 아랫면은 바닥에서 10 mm 위입니다. 서보 들어갈 세로 판이 바깥 뒤로 튀어나옵니다.','구멍 자리 표시 → 2.5 mm 드릴, 깊이 8 mm → M3 × 10으로 조입니다.']},
+ {t:'서보 넣기',need:'서보, 서보 상자 안 긴 나사 2개',d:['서보 축(흰 톱니)이 <b>마스크통 쪽, 위쪽</b>을 보게 듭니다.','서보 받침의 사각 구멍에 바깥쪽에서 몸통부터 밀어 넣습니다.','날개 구멍 2개에 서보 나사를 조입니다. SG90은 조금 헐렁해도 나사가 잡아 줍니다.','서보 선은 아래로 늘어뜨려 둡니다.']},
+ {t:'혼을 뚜껑에 달기',need:'외팔 혼(서보 상자 안), M2 × 6 2개',d:['뚜껑을 뒤집어 오른쪽 뒤 팔을 찾습니다. 안쪽 면에 물방울 모양 홈이 있습니다.','외팔 혼을 홈에 끼웁니다. 혼 가운데 구멍이 팔의 큰 구멍과 맞아야 합니다.','바깥쪽 작은 구멍 2개로 M2 × 6을 넣어 혼을 조입니다. 나사가 없으면 순간접착제를 씁니다.','뚜껑은 아직 마스크통에 올리지 않습니다.']},
+],
+wire:[
+ {t:'우산통 전원 끄기',d:['어댑터 플러그를 뽑습니다.','ESP32의 USB도 뽑습니다.']},
+ {t:'서보 선 늘이기',need:'듀퐁선 수-암 3가닥',d:['서보 커넥터(3칸)에 듀퐁선 수 쪽을 하나씩 꽂습니다.','선 색을 맞추면 헷갈리지 않습니다: 빨강 → 빨강, 갈색 → 검정, 주황 → 노랑이나 주황.','이음 자리를 절연테이프로 한 바퀴 감아 빠지지 않게 합니다.']},
+ {t:'꼬리표 붙이기',d:['선 5가닥 양 끝에 M1~M5 꼬리표를 붙입니다.','M1 서보 빨강, M2 서보 갈색, M3 서보 주황, M4 버튼 선 하나, M5 버튼 다른 선.']},
+ {t:'선을 우산통 안으로',d:['5가닥을 케이블타이로 한데 묶습니다.','어댑터 선이 들어가는 뒤 아래 홈으로 함께 넣습니다.','마스크통을 놓을 자리까지 당겨 보고, 남는 길이는 우산통 안쪽에서 묶어 둡니다.']},
+ {t:'M1 · 빨강 → LM-B 출력 +',d:['M1 끝의 암 커넥터를 잘라 내고 피복을 7 mm 벗깁니다.','아래 전자판에서 LM-B(두 번째 5V 변환기)의 출력 쪽 <b>+</b> 나사를 찾습니다. 소리 모듈 빨간 선(26번)이 이미 물려 있습니다.','나사를 2바퀴 풉니다. 소리 모듈 선은 빼지 않습니다.','M1 벗긴 끝을 소리 모듈 선 옆에 같이 넣고 나사를 조입니다.','두 선을 하나씩 살짝 당겨 봅니다. 빠지면 두 선 끝을 꼬아서 다시 넣습니다.']},
+ {t:'M2 · 갈색 → LM-B 출력 −',d:['M2 끝도 커넥터를 자르고 7 mm 벗깁니다.','같은 LM-B의 출력 쪽 <b>−</b> 나사를 2바퀴 풉니다.','소리 모듈 검정 선 옆에 같이 넣고 조입니다.','당겨 봐서 안 빠지면 끝. <b>+와 −를 바꿔 물리면 서보가 탑니다.</b> 한 번 더 확인합니다.']},
+ {t:'M3 · 주황 → ESP32 15번',d:['ESP32 핀 옆 글자에서 <b>D15</b>(또는 15)를 찾습니다.','M3의 암 커넥터를 그 핀에 꽂습니다.']},
+ {t:'M4 · 버튼 → ESP32 12번',d:['ESP32에서 <b>D12</b>(또는 12)를 찾습니다. 15번과 가까이 있지 않으니 글자를 꼭 확인합니다.','M4의 암 커넥터를 꽂습니다.','12번 핀에는 5V나 3.3V를 절대 잇지 않습니다. 켤 때 고장 납니다.']},
+ {t:'M5 · 버튼 → L3 셋째 구멍',d:['M5 끝의 암 커넥터를 자르고 11 mm 벗깁니다(WAGO 옆면 눈금 길이).','신호 접지 WAGO <b>L3</b>의 셋째 구멍 레버를 올립니다. 원래 예비로 비어 있는 구멍입니다.','선을 끝까지 넣고 레버를 내립니다.','살짝 당겨 봐서 안 빠지면 끝.']},
+],
+test:[
+ {t:'전원 켜기 전 통전 검사',d:['멀티미터를 삐 모드로 둡니다.','LM-B 출력 + 나사와 − 나사를 댑니다.'],ok:'삐 소리가 나지 않음',bad:'삐 소리가 나면 M1과 M2가 같은 나사에 물린 것입니다. 다시 확인합니다.'},
+ {t:'5V 확인',d:['어댑터를 꽂습니다.','멀티미터를 전압(V) 모드로 두고 LM-B 출력 + 와 − 를 잽니다.'],ok:'5.00 V 근처 (4.95~5.05)',bad:'−5 V면 M1·M2가 아니라 LM-B 쪽 문제입니다. 우산통 시험 S2\'를 다시 봅니다.'},
+ {t:'소리 모듈 아직 되는지',d:['우산통 시험 코드(revd_wiring_test)가 올라가 있으면 시리얼 모니터에서 <span class="mono">d</span>를 보냅니다.'],ok:'소리가 남',bad:'안 나면 LM-B + 나사에서 소리 모듈 선이 빠진 것입니다. 다시 조입니다.'},
+ {t:'시험 코드 올리기',d:['mask_lid_test.ino를 Arduino IDE로 엽니다.','보드는 ESP32 Dev Module, 올리기.','시리얼 모니터를 115200으로 엽니다.'],ok:'「마스크통 뚜껑 시험」 메뉴가 보임',bad:'메뉴가 안 보이면 시리얼 모니터 속도를 115200으로.'},
+ {t:'버튼 확인',d:['<span class="mono">b</span>를 보냅니다.','10초 동안 버튼을 3번 누릅니다.'],ok:'「눌림 1, 2, 3」이 뜨고 「끝: 3번」',bad:'0번이면 M4가 12번 핀인지, M5 레버가 내려갔는지 봅니다. 안 눌러도 계속 뜨면 M4가 옆 핀에 꽂힌 것입니다.'},
+ {t:'서보를 가운데로',d:['<span class="mono">c</span>를 보냅니다.'],ok:'서보가 조금 돌고 조용히 멈춤. ESP32가 다시 켜지지 않음',bad:'ESP32가 다시 켜지면 M1·M2를 봅니다. 안 움직이면 M3가 15번 핀인지 봅니다.'},
+ {t:'뚜껑 올리기',need:'혼 나사(서보 상자 안 짧은 것), M3 × 12 볼트',d:['어댑터를 뽑습니다. 서보는 가운데에 멈춘 그대로 둡니다.','뚜껑을 마스크통에 덮으면서 혼 가운데를 서보 축 톱니에 끼웁니다. 뚜껑이 닫힌 자리에 있을 때 끼웁니다.','뚜껑 팔의 큰 구멍으로 혼 나사를 넣어 조입니다.','왼쪽은 M3 × 12 볼트를 뚜껑 팔 바깥에서 넣어 경첩 받침에 조입니다.','손으로 뚜껑이 부드럽게 돌 정도까지만 조입니다. 너무 조이면 서보가 힘들어합니다.']},
+ {t:'닫힘 각도 찾기',d:['어댑터를 다시 꽂습니다.','<span class="mono">+</span>나 <span class="mono">-</span>를 한 번씩 보내며 뚜껑이 상자에 닿기 직전 자리를 찾습니다.','닿으면 2° 덜 닫히는 쪽으로 한 번 더 보냅니다.','<span class="mono">C</span>를 보내고, 뜬 숫자를 아래 메모 칸에 적습니다.'],ok:'뚜껑이 닫혀 있고 서보가 조용함',bad:'서보가 「지지직」 소리를 내면 덜 닫히게 2° 더 옮깁니다.'},
+ {t:'열림 각도 찾기',d:['<span class="mono">+</span>나 <span class="mono">-</span>를 보내 뚜껑이 뒤로 열리게 합니다.','마스크를 꺼내기 편한 자리(100° 쯤)에서 멈춥니다.','<span class="mono">O</span>를 보내고 숫자를 메모합니다.'],ok:'뚜껑이 뒤로 열려 서 있음',bad:'반대로 돌면 + 대신 -를 씁니다.'},
+ {t:'각도를 코드에 넣기',d:['mask_lid_test.ino 맨 위 <span class="mono">closedDeg</span>와 <span class="mono">openDeg</span>를 메모한 숫자로 바꿉니다.','다시 올립니다.'],ok:'전원을 껐다 켜도 같은 각도로 움직임'},
+ {t:'10번 여닫기',d:['<span class="mono">r</span>를 보냅니다.','끝나면 서보를 손으로 만져 봅니다.'],ok:'걸림 없이 10번, ESP32가 다시 켜지지 않음, 서보가 미지근함',bad:'중간에 걸리면 왼쪽 볼트를 반 바퀴 풉니다. 서보가 뜨거우면 닫힘 각도를 2° 덜 닫히게.'},
+ {t:'버튼으로 쓰기',d:['아무 명령도 보내지 않고 버튼을 5번 누릅니다.'],ok:'누를 때마다 열림 ↔ 닫힘',bad:'한 번에 두 번 움직이면 코드의 delay(30)을 60으로.'},
+ {t:'선 정리',d:['어댑터를 뽑습니다.','우산통 안 선 5가닥을 케이블타이로 다른 선 묶음에 붙입니다.','마스크통 밖 선은 마스크통 뒤로 돌려 테이프로 붙입니다.','덮개를 닫습니다.']},
+]};
+let st={};try{st=JSON.parse(localStorage.getItem('mask-steps')||'{}')}catch(e){}
+function save(){try{localStorage.setItem('mask-steps',JSON.stringify(st))}catch(e){}}
+const PFX={asm:'A',wire:'C',test:'T'};
+function renderSteps(){document.querySelectorAll('.steps').forEach(el=>{const g=el.dataset.g,L=STEPS[g];const n=L.filter((s,i)=>st[g+i]).length;
+ el.innerHTML=`<div class="prog"><span>${n} / ${L.length} 끝</span><span class="pbar"><i style="width:${n/L.length*100}%"></i></span></div>`+L.map((s,i)=>{const k=g+i,on=!!st[k];
+ return `<article class="st ${on?'done':''}"><label class="sh"><input type="checkbox" data-k="${k}" ${on?'checked':''}><span class="no">${PFX[g]}${i+1}</span><span class="tt">${s.t}</span></label>
+ <div class="sb">${s.need?`<p class="need">준비 · ${s.need}</p>`:''}<ol>${s.d.map(x=>`<li>${x}</li>`).join('')}</ol>${s.ok?`<dl><dt>정상</dt><dd>${s.ok}</dd>${s.bad?`<dt>안 되면</dt><dd>${s.bad}</dd>`:''}</dl>`:''}</div></article>`}).join('')})}
+document.addEventListener('change',e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;st[k]=e.target.checked;save();renderSteps()});
 for(const id of ['mClose','mOpen']){const el=$('#'+id);el.value=st[id]||'';el.oninput=()=>{st[id]=el.value;save()}}
-renderCk();
+renderSteps();
+
 size();bg();fit();paint();setAng(0);
 R.setAnimationLoop(()=>{if(Math.abs(target-ang)>.1&&!reduce)setAng(ang+(target-ang)*.08);C.update();R.render(S,cam)});
 </script>
