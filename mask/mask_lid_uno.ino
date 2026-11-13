@@ -20,12 +20,12 @@ const int SERVO_PIN = 9;
 int closedDeg = 90;               // 시험에서 찾은 숫자로 바꾼다
 int openDeg = 0;                  // 시험에서 찾은 숫자로 바꾼다
 unsigned long OPEN_MS = 5000;     // 열려 있는 시간
-unsigned long CLOSED_MS = 10000;  // 닫혀 있는 시간
+unsigned long CLOSED_MS = 5000;   // 닫혀 있는 시간
 
 Servo lid;
 int nowDeg = 90;
 bool isOpen = false;
-bool autoOn = false;              // 처음엔 멈춤. 각도를 맞춘 뒤 s로 켜거나, 아래를 true로
+bool autoOn = true;               // 켜면 바로 자동 반복. 멈추려면 시리얼 모니터에 s
 unsigned long tMark = 0;
 
 void servoGo(int deg, int ms) {
@@ -68,6 +68,7 @@ void setup() {
   Serial.begin(9600);
   delay(300);
   menu();
+  servoGo(closedDeg, 800);       // 켜자마자 한 번 움직여서 살아 있는지 보여 준다
   tMark = millis();
 }
 
