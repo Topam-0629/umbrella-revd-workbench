@@ -301,7 +301,7 @@ test:[
  {t:'뚜껑 올리기',need:'혼 나사(서보 상자 안 짧은 것), M3 × 12 볼트',d:['USB를 뽑습니다. 서보는 가운데에 멈춘 그대로 둡니다.','뚜껑을 닫힌 자리에 덮으면서 혼 가운데를 서보 축 톱니에 끼웁니다.','뚜껑 팔의 큰 구멍으로 혼 나사를 넣어 조입니다.','왼쪽은 M3 × 12 볼트를 뚜껑 팔 바깥에서 넣어 경첩 받침에 조입니다.','손으로 뚜껑이 부드럽게 돌 정도까지만 조입니다.']},
  {t:'닫힘 각도 찾기',d:['USB를 다시 꽂고 시리얼 모니터를 엽니다.','<span class="mono">+</span>나 <span class="mono">-</span>를 한 번씩 보내며 뚜껑이 상자에 닿기 직전 자리를 찾습니다.','닿으면 2° 덜 닫히는 쪽으로 한 번 더 보냅니다.','<span class="mono">C</span>를 보내고 뜬 숫자를 아래 메모 칸에 적습니다.'],ok:'뚜껑이 닫혀 있고 서보가 조용함',bad:'「지지직」 소리가 나면 2° 더 덜 닫히게.'},
  {t:'열림 각도 찾기',d:['<span class="mono">+</span>나 <span class="mono">-</span>를 보내 뚜껑을 뒤로 엽니다.','100° 쯤 열린 자리에서 멈춥니다.','<span class="mono">O</span>를 보내고 숫자를 메모합니다.'],ok:'뚜껑이 뒤로 열려 서 있음',bad:'반대로 돌면 + 대신 -를 씁니다.'},
- {t:'숫자 넣고 자동 켜기',d:['코드 위쪽 <span class="mono">closedDeg</span>, <span class="mono">openDeg</span>를 메모한 숫자로 바꿉니다.','<span class="mono">autoOn = false</span>를 <span class="mono">true</span>로 바꿉니다.','다시 올립니다.'],ok:'10초 닫혀 있다가 열리고, 5초 뒤 닫히기를 반복',bad:'시간을 바꾸려면 OPEN_MS(열린 시간), CLOSED_MS(닫힌 시간) 숫자를 바꿉니다. 1000 = 1초.'},
+ {t:'숫자 넣고 다시 올리기',d:['코드 위쪽 <span class="mono">closedDeg</span>, <span class="mono">openDeg</span>를 메모한 숫자로 바꿉니다.','다시 올립니다.'],ok:'5초 닫혀 있다가 열리고, 5초 뒤 닫히기를 반복',bad:'시간을 바꾸려면 OPEN_MS(열린 시간), CLOSED_MS(닫힌 시간) 숫자를 바꿉니다. 1000 = 1초.'},
  {t:'충전기로 바꾸기',d:['컴퓨터 USB를 뽑습니다.','5V 충전기에 USB 케이블을 꽂아 우노에 연결합니다.'],ok:'컴퓨터 없이도 저절로 열리고 닫힘'},
 ]};
 let st={};try{st=JSON.parse(localStorage.getItem('mask-steps-v3')||'{}')}catch(e){}
