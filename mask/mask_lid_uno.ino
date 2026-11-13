@@ -1,47 +1,51 @@
-// 스마트 우산통 REV D — 마스크통 뚜껑 (아두이노 우노 단독)
-// 버튼을 누르면 뚜껑이 열리고, 한 번 더 누르면 닫힌다.
+// 스마트 우산통 REV D — 마스크통 자동 뚜껑 (아두이노 우노 단독)
+// 앞면 거리 센서 앞 15 cm 안에 손이 오면 뚜껑이 열리고, 손이 사라지고 5초 뒤 닫힌다.
+// 버튼 없음, 납땜 없음.
 // 필요: Arduino IDE. 보드: Arduino Uno. Servo 라이브러리는 IDE에 기본으로 들어 있다.
 // 시리얼 모니터 9600, 줄 끝 "새 줄".
 //
-// 배선
-//   서보 빨강 → 5V,  서보 갈색 → GND (5V 옆),  서보 주황 → 9번
-//   버튼 선 하나 → 2번,  다른 선 → GND (13번 옆)   (저항 없음)
+// 배선 (전부 듀퐁선 꽂기)
+//   서보 빨강 → 5V,  갈색 → GND (5V 옆),  주황 → 9번
+//   거리 센서 VCC → 5번 (코드가 5V를 켜 준다),  Trig → 6번,  Echo → 7번,  GND → GND (13번 옆)
 //
-// 명령 (시리얼 모니터)
-//   b : 버튼 확인 (10초 동안 누를 때마다 표시)
+// 시험 명령 (시리얼 모니터)
+//   d : 거리 보기 (10초)
 //   c : 가운데 90° (혼 달기 전에 한 번)
 //   o / x : 열기 / 닫기
 //   + / - : 지금 각도에서 2°씩
 //   C / O : 지금 각도를 닫힘 / 열림으로 (전원 끄면 사라짐 → 숫자를 메모해서 아래에 넣기)
 //   r : 10번 여닫기
-//   명령을 안 보내면 버튼으로 열고 닫는다.
+//   명령을 안 보내면 자동으로 움직인다.
 
 #include <Servo.h>
 
 const int SERVO_PIN = 9;
-const int BTN_PIN = 2;
+const int US_VCC = 5;      // 센서 전원 (센서는 15 mA라 핀으로 충분)
+const int US_TRIG = 6;
+const int US_ECHO = 7;
 
-int closedDeg = 90;   // 시험 T6에서 찾은 숫자로 바꾼다
-int openDeg = 0;      // 시험 T7에서 찾은 숫자로 바꾼다
+int closedDeg = 90;        // 시험 T6에서 찾은 숫자로 바꾼다
+int openDeg = 0;           // 시험 T7에서 찾은 숫자로 바꾼다
+int OPEN_CM = 15;          // 이 거리보다 가까우면 연다
+unsigned long CLOSE_MS = 5000;   // 손이 사라지고 이만큼 지나면 닫는다
 
 Servo lid;
 int nowDeg = 90;
 bool isOpen = false;
+unsigned long lastSeen = 0;
+byte nearCount = 0;
 
-// 움직인 뒤 신호를 끊는다 → 서보가 힘을 빼서 떨림·소리가 없다
 void servoGo(int deg, int ms) {
   deg = constrain(deg, 0, 180);
   lid.attach(SERVO_PIN);
   lid.write(deg);
   delay(ms);
-  lid.detach();
+  lid.detach();            // 힘 빼기 → 떨림·소리 없음
   nowDeg = deg;
-  Serial.print("서보 ");
-  Serial.println(deg);
+  Serial.print(F("서보 ")); Serial.println(deg);
 }
 
-// 천천히 움직이기 (쾅 닫히지 않게)
-void servoSlow(int to) {
+void servoSlow(int to) {   // 천천히 (쾅 닫히지 않게)
   to = constrain(to, 0, 180);
   lid.attach(SERVO_PIN);
   while (nowDeg != to) {
@@ -51,34 +55,38 @@ void servoSlow(int to) {
   }
   delay(300);
   lid.detach();
-  Serial.print("서보 ");
-  Serial.println(nowDeg);
+  Serial.print(F("서보 ")); Serial.println(nowDeg);
 }
 
-bool pressed() {
-  if (digitalRead(BTN_PIN) != LOW) return false;
-  delay(30);                       // 접점 튐 거르기
-  return digitalRead(BTN_PIN) == LOW;
+// 거리(cm). 아무것도 없거나 너무 멀면 999
+int readCm() {
+  digitalWrite(US_TRIG, LOW);  delayMicroseconds(2);
+  digitalWrite(US_TRIG, HIGH); delayMicroseconds(10);
+  digitalWrite(US_TRIG, LOW);
+  unsigned long us = pulseIn(US_ECHO, HIGH, 25000UL);
+  if (us == 0) return 999;
+  return (int)(us / 58UL);
 }
 
-void waitRelease() {
-  while (digitalRead(BTN_PIN) == LOW) delay(10);
-  delay(30);
-}
+void openLid()  { isOpen = true;  Serial.println(F("열기")); servoSlow(openDeg); }
+void closeLid() { isOpen = false; Serial.println(F("닫기")); servoSlow(closedDeg); }
 
 void menu() {
   Serial.println();
-  Serial.println(F("== 마스크통 뚜껑 (우노) =="));
+  Serial.println(F("== 마스크통 자동 뚜껑 (우노) =="));
   Serial.print(F("닫힘 ")); Serial.print(closedDeg);
   Serial.print(F(", 열림 ")); Serial.print(openDeg);
-  Serial.print(F(", 지금 ")); Serial.println(nowDeg);
-  Serial.println(F("b 버튼 | c 가운데 | o 열기 | x 닫기 | + - 2도씩"));
+  Serial.print(F(", 여는 거리 ")); Serial.print(OPEN_CM); Serial.println(F(" cm"));
+  Serial.println(F("d 거리 | c 가운데 | o 열기 | x 닫기 | + - 2도씩"));
   Serial.println(F("C 지금=닫힘 | O 지금=열림 | r 10번 여닫기"));
 }
 
 void setup() {
   Serial.begin(9600);
-  pinMode(BTN_PIN, INPUT_PULLUP);  // 안 누르면 HIGH, 누르면 LOW
+  pinMode(US_VCC, OUTPUT); digitalWrite(US_VCC, HIGH);
+  pinMode(US_TRIG, OUTPUT); digitalWrite(US_TRIG, LOW);
+  pinMode(US_ECHO, INPUT);
+  delay(300);
   menu();
 }
 
@@ -86,19 +94,20 @@ void loop() {
   if (Serial.available()) {
     char c = Serial.read();
     switch (c) {
-      case 'b': {
-        Serial.println(F("10초 동안 버튼을 눌러 보세요"));
+      case 'd': {
+        Serial.println(F("10초 동안 센서 앞에 손을 가까이, 멀리 해 보세요"));
         unsigned long t0 = millis();
-        int n = 0;
         while (millis() - t0 < 10000UL) {
-          if (pressed()) { n++; Serial.print(F("눌림 ")); Serial.println(n); waitRelease(); }
+          int cm = readCm();
+          if (cm == 999) Serial.println(F("없음"));
+          else { Serial.print(cm); Serial.println(F(" cm")); }
+          delay(300);
         }
-        Serial.print(F("끝: ")); Serial.print(n); Serial.println(F("번 (0이면 배선 확인)"));
         break;
       }
       case 'c': servoGo(90, 1000); break;
-      case 'o': isOpen = true;  servoSlow(openDeg); break;
-      case 'x': isOpen = false; servoSlow(closedDeg); break;
+      case 'o': openLid(); lastSeen = millis(); break;
+      case 'x': closeLid(); break;
       case '+': servoGo(nowDeg + 2, 300); break;
       case '-': servoGo(nowDeg - 2, 300); break;
       case 'C': closedDeg = nowDeg; Serial.print(F("닫힘 = ")); Serial.println(closedDeg); break;
@@ -116,10 +125,15 @@ void loop() {
       default: menu();
     }
   }
-  if (pressed()) {
-    isOpen = !isOpen;
-    Serial.println(isOpen ? F("열기") : F("닫기"));
-    servoSlow(isOpen ? openDeg : closedDeg);
-    waitRelease();
+
+  // 자동: 두 번 연속 가까우면 열고, 5초 동안 아무것도 없으면 닫는다
+  int cm = readCm();
+  bool near = (cm < OPEN_CM);
+  nearCount = near ? (nearCount < 2 ? nearCount + 1 : 2) : 0;
+  if (nearCount >= 2) {
+    lastSeen = millis();
+    if (!isOpen) openLid();
   }
+  if (isOpen && millis() - lastSeen > CLOSE_MS) closeLid();
+  delay(60);
 }
