@@ -749,7 +749,7 @@ const el=$('#view');
 const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));el.prepend(renderer.domElement);
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 const scene=new THREE.Scene();const cam=new THREE.PerspectiveCamera(32,1,0.005,20);
-const ctl=new OrbitControls(cam,renderer.domElement);ctl.enableDamping=true;
+const ctl=new OrbitControls(cam,renderer.domElement);ctl.addEventListener('end',()=>{try{updateLabels()}catch(e){}});ctl.enableDamping=true;
 scene.add(new THREE.HemisphereLight(0xffffff,0x8a8f99,1.25));
 const d1=new THREE.DirectionalLight(0xffffff,1.9);d1.position.set(.6,1,.8);scene.add(d1);
 const d2=new THREE.DirectionalLight(0xffffff,.8);d2.position.set(-.8,.4,-.7);scene.add(d2);
@@ -960,8 +960,9 @@ function updateLabels(){labelLayer.children.slice().forEach(o=>{labelLayer.remov
   else if(mode==='bench')ws=WM.bench.filter(m=>benchStepOfWire[m.userData.wire]===bCur);
   else if(mode==='wire')ws=WM.asm.filter(m=>(wireStep[m.userData.wire]??9)===wCur);
   const up=S==='bench'?V3(0,0,1):V3(0,1,0);
+  const placed=[];const su=V3(0,1,0).applyQuaternion(cam.quaternion).applyQuaternion(frame.getWorldQuaternion(new THREE.Quaternion()).invert()).normalize();
   for(const m of ws){const cv=m.userData.curve,col=CN[(D.wires.find(w=>String(w[0])===m.userData.wire)||[])[5]?.split(/[\/ ]/)[0]]||'#'+m.userData.base.toString(16).padStart(6,'0');
-    for(const t of [.1,.9]){const p=cv.getPointAt(t).add(up.clone().multiplyScalar(5));const s=labelSprite(m.userData.tag,'#'+m.userData.base.toString(16).padStart(6,'0'),S==='bench'?5.5:5);
+    for(const t of [.1,.9]){const p=cv.getPointAt(t).add(up.clone().multiplyScalar(5));let g=0;while(g++<12&&placed.some(q=>q.distanceTo(p)<(S==='bench'?7:6)))p.add(su.clone().multiplyScalar(S==='bench'?6.5:5.5));placed.push(p.clone());const s=labelSprite(m.userData.tag,'#'+m.userData.base.toString(16).padStart(6,'0'),S==='bench'?5.5:5);
       s.position.copy(frame.localToWorld(p.clone()));s.scale.multiplyScalar(.001);labelLayer.add(s)}}
   if(pinInst&&INST[S][pinInst]){const o=INST[S][pinInst];const box=new THREE.Box3().setFromObject(o);const cw=box.getCenter(new THREE.Vector3());const cl=frame.worldToLocal(cw.clone());
     for(const k in A[S]){if(!k.startsWith(pinInst+'.'))continue;const pin=k.slice(pinInst.length+1);if(pin==='W'||pin==='plug'||pin==='out'||pin==='usb')continue;
