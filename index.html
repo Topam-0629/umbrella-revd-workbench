@@ -209,7 +209,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       <button role="tab" data-t="anim" aria-selected="false">작동</button>
       <button role="tab" data-t="test" aria-selected="false">전원 시험</button>
       <button role="tab" data-t="screen" aria-selected="false">화면 앱</button>
-      <a class="navlink" href="wago.html">와고 번호</a>
+      <a class="navlink" href="wago.html">와고·단자대 번호</a>
       <a class="navlink" style="margin-left:0;border-left:0" href="coupon.html">시험 조각</a>
       <a class="navlink" style="margin-left:0;border-left:0" href="mask.html">마스크통</a>
     </nav>
@@ -605,11 +605,11 @@ const BENCH=[
  {t:'12V 들어오게 하기',d:['전원 잭 → 퓨즈 홀더 1 → 와고 1(12V 나눔) 순서로 빨간 선을 잇습니다.','전원 잭의 마이너스 나사는 검은 선으로 와고 5(12V 접지)에 잇습니다.','어댑터를 콘센트에 꽂고, 멀티미터 빨간 침을 와고 1, 검은 침을 와고 5에 대 봅니다.','확인했으면 어댑터를 뺍니다.'],w:[1,2,3,4],c:['12V 근처가 나온다 (마이너스 값이면 전원 잭의 두 선을 서로 바꾼다)','어댑터를 뺐다']},
  {t:'5V 변환기 두 개 맞추기',d:['5V 변환기 A와 B의 입력 쪽만 잇습니다. 출력 쪽은 아직 비워 둡니다.','어댑터를 꽂고, 변환기 출력 나사 두 곳에 멀티미터를 댑니다.','파란 네모 부품 위의 작은 나사를 드라이버로 돌려 5.00V에 맞춥니다.','두 개 다 맞췄으면 어댑터를 뺍니다.'],w:[9,10,12],c:['5V 변환기 A 출력이 5.00V','5V 변환기 B 출력이 5.00V','어댑터를 뺐다']},
  {t:'5V 줄과 접지 줄 만들기',d:['5V 변환기 A의 출력 플러스는 와고 7(5V 나눔)로, 출력 마이너스는 와고 8(신호 접지)로 보냅니다.','와고 8 → 9 → 10(신호 접지)을 검은 선으로 차례로 잇습니다.','48번 선은 12V 쪽 접지와 5V 쪽 접지가 만나는 단 하나의 선입니다. 다른 곳에서 두 접지를 또 잇지 않습니다.'],w:[11,20,25,48],c:['와고 7과 와고 8 사이가 5.00V','와고 1과 와고 7 사이가 약 7V']},
- {t:'ESP32에 전원 넣기',d:['와고 7(5V 나눔)에서 ESP32의 VIN 핀으로, 와고 8(신호 접지)에서 ESP32의 접지 핀으로 점퍼선을 꽂습니다.','VIN 자리를 꼭 두 번 확인합니다. 3.3V 핀에 5V를 넣으면 보드가 망가집니다.','ESP32의 3.3V 핀에서 신호 단자대 10번 칸으로 보낸 뒤, 그 칸에서 화면과 두 모터 드라이버의 전원 핀으로 나눕니다.'],w:[21,27,28],c:['VIN 핀 5.0V, 3.3V 핀 3.3V','USB를 빼고 어댑터만 꽂아도 ESP32 불이 켜진다']},
- {t:'거리 센서와 사람 감지 센서',d:['센서 3개에 전원 선과 접지 선을 꽂습니다.','거리 센서의 "신호 받기" 핀은 5V가 나와서 ESP32에 바로 꽂으면 안 됩니다. 저항 단자대를 거쳐 낮춘 뒤 ESP32로 갑니다.','사람 감지 센서의 신호 핀은 ESP32에 바로 꽂습니다.'],w:[22,23,24,34,35,36,37,38,39],c:['시리얼 모니터에 u 입력 → 손을 10 cm 앞에 대면 약 100 mm가 나온다','p 입력 → 손을 흔들면 1, 멈추면 0이 나온다'],k:['u','p']},
+ {t:'ESP32에 전원 넣기',d:['와고 7(5V 나눔)에서 ESP32의 VIN 핀으로, 와고 8(신호 접지)에서 ESP32의 접지 핀으로 점퍼선을 꽂습니다.','VIN 자리를 꼭 두 번 확인합니다. 3.3V 핀에 5V를 넣으면 보드가 망가집니다.','ESP32의 3.3V 핀에서 단자대 2(신호) 10번 칸으로 보낸 뒤, 그 칸에서 화면과 두 모터 드라이버의 전원 핀으로 나눕니다.'],w:[21,27,28],c:['VIN 핀 5.0V, 3.3V 핀 3.3V','USB를 빼고 어댑터만 꽂아도 ESP32 불이 켜진다']},
+ {t:'거리 센서와 사람 감지 센서',d:['센서 3개에 전원 선과 접지 선을 꽂습니다.','거리 센서의 "신호 받기" 핀은 5V가 나와서 ESP32에 바로 꽂으면 안 됩니다. 단자대 1(저항)을 거쳐 낮춘 뒤 ESP32로 갑니다.','사람 감지 센서의 신호 핀은 ESP32에 바로 꽂습니다.'],w:[22,23,24,34,35,36,37,38,39],c:['시리얼 모니터에 u 입력 → 손을 10 cm 앞에 대면 약 100 mm가 나온다','p 입력 → 손을 흔들면 1, 멈추면 0이 나온다'],k:['u','p']},
  {t:'화면과 소리',d:['화면의 신호 핀 5개를 회색 점퍼선으로 ESP32에 꽂습니다.','소리 모듈은 5V 변환기 B에서 전원을 받고, ESP32와 초록 선 3개로 잇습니다.','스피커 두 선은 와고 13·14(이음)에서 소리 모듈 선과 잇습니다.'],w:[26,40,42,43,44,45,46],c:['t 입력 → 화면이 빨강 → 초록 → 파랑으로 바뀌고 흰 네모가 왼쪽 위에 나온다','d 입력 → 안내 소리가 난다'],k:['t','d']},
  {t:'팬',d:['팬 스위치 2개에 12V 전원을 잇고, 팬에 달린 선을 꽂습니다.','팬 스위치의 초록 단자는 두 칸입니다. 플러스 칸에는 ESP32 신호 선, 마이너스 칸에는 신호 접지 선을 잇습니다.','파란 3칸 단자에 적힌 글자를 아래 메모에 남겨 주세요.'],w:[13,14,17,18,47,'47G'],c:['초록 단자 마이너스 칸에 접지 선(47G번)을 이었다','파란 3칸 단자의 글자를 메모에 남겼다','f 입력 → 두 팬이 3초 돈다'],k:['f']},
- {t:'모터 드라이버와 액추에이터',d:['액추에이터를 책상에 눕혀 테이프로 고정합니다. 막대가 나오는 앞쪽은 비워 둡니다.','퓨즈 홀더 2의 퓨즈는 빼 둔 채로 선을 모두 잇습니다.','모든 선을 확인한 뒤, 맨 마지막에 퓨즈를 끼웁니다.'],w:[5,6,7,8,15,16,29,30,31,32,33],c:['퓨즈를 뺀 채 모터 드라이버 전원 핀이 3.3V','퓨즈를 끼운 뒤 모터 드라이버 전원 플러스·마이너스 나사 사이가 12V','q / a 입력 → 왼쪽 막대가 조금 나왔다 들어간다 (반대로 움직이면 모터 플러스·마이너스 선을 서로 바꾼다)','w / s 입력 → 오른쪽도 같은 방법으로 본다','왼쪽 명령에 오른쪽이 움직이면 신호 단자대의 왼쪽·오른쪽 선이 바뀐 것'],k:['q','a','w','s']},
+ {t:'모터 드라이버와 액추에이터',d:['액추에이터를 책상에 눕혀 테이프로 고정합니다. 막대가 나오는 앞쪽은 비워 둡니다.','퓨즈 홀더 2의 퓨즈는 빼 둔 채로 선을 모두 잇습니다.','모든 선을 확인한 뒤, 맨 마지막에 퓨즈를 끼웁니다.'],w:[5,6,7,8,15,16,29,30,31,32,33],c:['퓨즈를 뺀 채 모터 드라이버 전원 핀이 3.3V','퓨즈를 끼운 뒤 모터 드라이버 전원 플러스·마이너스 나사 사이가 12V','q / a 입력 → 왼쪽 막대가 조금 나왔다 들어간다 (반대로 움직이면 모터 플러스·마이너스 선을 서로 바꾼다)','w / s 입력 → 오른쪽도 같은 방법으로 본다','왼쪽 명령에 오른쪽이 움직이면 단자대 2(신호)의 왼쪽·오른쪽 선이 바뀐 것'],k:['q','a','w','s']},
  {t:'기록하고 판으로 옮기기',d:['잰 값과 실물이 다른 점을 아래 메모에 남깁니다.','연결된 모습을 사진으로 찍어 둡니다.','판으로 옮길 때 선이 뽑히지 않도록 묶음마다 15 cm 여유를 둡니다.'],w:[],c:['전압·거리 값을 메모에 남겼다','연결 사진을 찍었다']},
 ];
 const GLOSS=`<details open><summary>처음이라면 — 선과 단자 이름</summary><div class="howbox">
@@ -685,9 +685,9 @@ function renderWire(){
   ${wCur===1?tagTable():''}`;
   if(wCur===1)h+=`<div class="sub">아래 전자판 — 모듈·WAGO 자리</div><div class="paper">${D.diag.plate_LOW}</div><div class="sub">위 전자판</div><div class="paper">${D.diag.plate_UP}</div>`;
   for(const d of s.diag)h+=`<div class="sub">연결도</div><div class="paper">${D.diag[d]}</div>`;
-  if(s.tables.includes('WAGO'))h+=`<div class="sub">WAGO 칸 배정</div>`+table(['WAGO','종류','줄','칸 1','칸 2','칸 3','칸 4','칸 5'],D.wago.map(([n,k,net,ps])=>[WN[n]?`와고 ${WN[n][0]} (${n})`:n,k,net,...ps.map(x=>x.replace(/\b([WGLJ]\d|V1)\b/g,m=>WN[m]?`와고 ${WN[m][0]}`:m)),...Array(5-ps.length).fill('')]),[0]);
-  if(s.tables.includes('TB2'))h+=`<div class="sub">TB2 (위 판) 나사별로 물릴 것</div>`+table(['위치','위 나사','아래 나사'],D.tb2,[0]);
-  if(s.tables.includes('TB1'))h+=`<div class="sub">TB1 (아래 판) 나사별로 물릴 것</div>`+table(['위치','위 나사','아래 나사'],D.tb1,[0]);
+  if(s.tables.includes('WAGO'))h+=`<div class="sub">WAGO 칸 배정</div>`+table(['WAGO','종류','줄','칸 1','칸 2','칸 3','칸 4','칸 5'],D.wago.map(([n,k,net,ps])=>[WN[n]?`와고 ${WN[n][0]} (${n})`:n,k,net,...ps.map(x=>x.replace(/\b([WGLJ]\d|V1)\b/g,m=>WN[m]?`와고 ${WN[m][0]}`:m).replace(/\bTB([123]) P(\d+)/g,'단자대 $1 · $2번 칸')),...Array(5-ps.length).fill('')]),[0]);
+  if(s.tables.includes('TB2'))h+=`<div class="sub">단자대 2 · 신호 (TB2, 위 판) 나사별로 물릴 것</div>`+table(['위치','위 나사','아래 나사'],D.tb2,[0]);
+  if(s.tables.includes('TB1'))h+=`<div class="sub">단자대 1 · 저항 (TB1, 아래 판) 나사별로 물릴 것</div>`+table(['위치','위 나사','아래 나사'],D.tb1,[0]);
   if(wCur===4)h+=`<div class="sub">ESP32 핀표</div>`+table(['ESP32 핀','연결 대상','방향','거쳐가는 곳','메모'],D.pins,[0]);
   $('#v-wire').innerHTML=h;
 }
@@ -903,7 +903,7 @@ function tagOf([n,col,a,b]){const sg=SIGN[col];const E=[a,b];
   return `${n} ${inst}.${pin}`}
 // 한글 이름: 초보자가 실물에서 바로 찾도록, 기호 대신 말로 쓴다. 보드에 적힌 글자는 회색 칸으로만 덧붙인다.
 const WN={W1:[1,'12V 나눔','#d6453d'],W2:[2,'12V 나눔','#d6453d'],W3:[3,'12V 나눔','#d6453d'],W4:[4,'12V 나눔 (모터)','#d6453d'],G1:[5,'12V 접지','#2b2d31'],G2:[6,'12V 접지','#2b2d31'],V1:[7,'5V 나눔','#e8902c'],L1:[8,'신호 접지','#2f62c9'],L2:[9,'신호 접지','#2f62c9'],L3:[10,'신호 접지','#2f62c9'],J1:[11,'이음','#8a8f99'],J2:[12,'이음','#8a8f99'],J3:[13,'이음','#8a8f99'],J4:[14,'이음','#8a8f99']};
-const KN={ADP:'12V 어댑터',JACK:'전원 잭',F1:'퓨즈 홀더 1',F2:'퓨즈 홀더 2',W1:'와고 1 · 12V 나눔',W2:'와고 2 · 12V 나눔',W3:'와고 3 · 12V 나눔',W4:'와고 4 · 12V 나눔 (모터)',G1:'와고 5 · 12V 접지',G2:'와고 6 · 12V 접지',V1:'와고 7 · 5V 나눔',L1:'와고 8 · 신호 접지',L2:'와고 9 · 신호 접지',L3:'와고 10 · 신호 접지',J1:'와고 11 · 이음',J2:'와고 12 · 이음',J3:'와고 13 · 이음',J4:'와고 14 · 이음','LM-A':'5V 변환기 A','LM-B':'5V 변환기 B','Q-L':'왼쪽 팬 스위치','Q-R':'오른쪽 팬 스위치','MD-L':'왼쪽 모터 드라이버','MD-R':'오른쪽 모터 드라이버','ACT-L':'왼쪽 액추에이터','ACT-R':'오른쪽 액추에이터','FAN-L':'왼쪽 팬','FAN-R':'오른쪽 팬',TB1:'저항 단자대',TB2:'신호 단자대',TB3:'모터선 단자대',ESP:'ESP32 보드','US-L':'왼쪽 거리 센서','US-R':'오른쪽 거리 센서',PIR:'사람 감지 센서',LCD:'화면',DF:'소리 모듈',SPK:'스피커',LAPTOP:'노트북',UMB:'우산'};
+const KN={ADP:'12V 어댑터',JACK:'전원 잭',F1:'퓨즈 홀더 1',F2:'퓨즈 홀더 2',W1:'와고 1 · 12V 나눔',W2:'와고 2 · 12V 나눔',W3:'와고 3 · 12V 나눔',W4:'와고 4 · 12V 나눔 (모터)',G1:'와고 5 · 12V 접지',G2:'와고 6 · 12V 접지',V1:'와고 7 · 5V 나눔',L1:'와고 8 · 신호 접지',L2:'와고 9 · 신호 접지',L3:'와고 10 · 신호 접지',J1:'와고 11 · 이음',J2:'와고 12 · 이음',J3:'와고 13 · 이음',J4:'와고 14 · 이음','LM-A':'5V 변환기 A','LM-B':'5V 변환기 B','Q-L':'왼쪽 팬 스위치','Q-R':'오른쪽 팬 스위치','MD-L':'왼쪽 모터 드라이버','MD-R':'오른쪽 모터 드라이버','ACT-L':'왼쪽 액추에이터','ACT-R':'오른쪽 액추에이터','FAN-L':'왼쪽 팬','FAN-R':'오른쪽 팬',TB1:'단자대 1 · 저항',TB2:'단자대 2 · 신호',TB3:'단자대 3 · 모터선',ESP:'ESP32 보드','US-L':'왼쪽 거리 센서','US-R':'오른쪽 거리 센서',PIR:'사람 감지 센서',LCD:'화면',DF:'소리 모듈',SPK:'스피커',LAPTOP:'노트북',UMB:'우산'};
 const HOW={lever:'레버 단자에 끼우기',screw:'나사로 조이기',pin:'핀에 꽂기',lead:'달린 선 그대로',plug:'플러그 꽂기'};
 const HOWLONG={lever:'<b>레버 단자</b> — 주황 레버를 위로 올리고, 피복을 10 mm 벗긴 끝을 끝까지 넣은 뒤 레버를 내립니다. 살짝 당겨 빠지지 않으면 됩니다.',
   screw:'<b>나사 단자</b> — 작은 드라이버로 나사를 풀고, 피복 벗긴 끝을 구멍에 넣고 나사를 조입니다. 살짝 당겨 확인합니다.',
@@ -974,6 +974,7 @@ function labelSprite(text,col='#1f5eff',hmm=5){const c=document.createElement('c
 let pinInst=null;
 function updateLabels(){labelLayer.children.slice().forEach(o=>{labelLayer.remove(o);o.material.map?.dispose();o.material.dispose()});
   if(!ready)return;const S=mode==='bench'?'bench':'asm';const frame=S==='bench'?bench:cad;
+  if(mode==='bench'||mode==='wire'){for(const [c,t,col] of [['TB1','단자대 1','#3a9a5b'],['TB2','단자대 2','#3a9a5b'],['TB3','단자대 3','#3a9a5b']]){const o=INST[S][c];if(!o)continue;const bx=new THREE.Box3().setFromObject(o);const top=bx.getCenter(new THREE.Vector3());top.y=bx.max.y+.014;const sp=labelSprite(t,col,S==='bench'?11:7);sp.position.copy(top);sp.scale.multiplyScalar(.001);labelLayer.add(sp)}}
   if(mode==='bench'||mode==='wire'){for(const c in WN){const o=INST[S][c];if(!o)continue;const bx=new THREE.Box3().setFromObject(o);const top=bx.getCenter(new THREE.Vector3());top.y=bx.max.y;const up3=new THREE.Vector3(0,1,0);top.addScaledVector(up3,.012);
     const sp=labelSprite('와고 '+WN[c][0],WN[c][2],S==='bench'?11:7);sp.userData.wago=1;sp.position.copy(top);sp.scale.multiplyScalar(.001);labelLayer.add(sp)}}
   let ws=[];if(wSel!=null)ws=WM[S].filter(m=>m.userData.wire===wSel);
