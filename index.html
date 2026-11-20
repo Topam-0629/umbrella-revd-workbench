@@ -1,4 +1,4 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}.steptbl table{width:100%;table-layout:fixed}.steptbl th:first-child,.steptbl td.wn2{width:24%}.steptbl tr.cont td{border-top:0}.steptbl td{vertical-align:top;line-height:1.5}.steptbl td .sh{display:block;font-size:11px;color:var(--sub)}
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}.steptbl table{width:100%;table-layout:fixed}.steptbl th:first-child,.steptbl td.wn2{width:24%}.steptbl tr.cont td{border-top:0}.steptbl .gtag{display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:2px}.steptbl .silk2{font-family:var(--mono,monospace);font-size:11px;border:1px solid var(--line);padding:0 4px;border-radius:3px}.steptbl td{vertical-align:top;line-height:1.5}.steptbl td .sh{display:block;font-size:11px;color:var(--sub)}
 </style></head><body><title>우산통 REV D 작업대</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
@@ -590,13 +590,14 @@ const itemsHtml=items=>`<div class="list">${items.map(x=>`<div class="item${x.n&
 function stepTable(ws){const ns=ws.map(String);if(!ns.length)return '';let rows='';
   const DEV_IN=/\.(VCC|GND|TRIG|SCL|SDA|CS|DC|RES)$/;
   const flip=(a,b)=>(DEV_IN.test(a)&&!DEV_IN.test(b))||/\.W$/.test(a)||/^SPK\./.test(a)||/\.M[+-]$/.test(b);
-  const cell=e=>`<b>${esc(e.nm)}</b>${e.glue?'':' '}${esc(e.p)}<span class="sh">${esc(HOW[e.how]||'')}</span>`;
+  const cell=e=>`<b>${esc(e.nm)}</b>${e.glue?'':' '}${esc(e.p)}${e.silk?` <span class="silk2">${esc(e.silk)}</span>`:''}<span class="sh">${esc(HOW[e.how]||'')}</span>`;
+  const isG=(a,b,c)=>c==='검정'||/\.(GND|-|IN-|OUT-|B-|T2|PWM-)$/.test(a)||/\.(GND|-|IN-|OUT-|B-|T2|PWM-)$/.test(b);
   for(const n of ns){const segs=WL.filter(x=>x[0]===n);const k=wireKind(n);
     if(!segs.length){const w=WIRE[n];if(w)rows+=`<tr><td class="wn2"><b>${esc(n)}</b><span class="sh">${esc(k)}</span></td><td>${esc(w[1])}</td><td>${esc(w[2])}</td></tr>`;continue}
     segs.forEach((x,j)=>{let [a,b]=[x[2],x[3]];if(flip(a,b))[a,b]=[b,a];const c=CN[x[1]]?x[1]:'회색';
-      rows+=`<tr${j?' class="cont"':''}><td class="wn2"><b>${j===0?esc(n):''}</b> ${swatch(c)}<span class="sh">${esc(c)}${j===0?' · '+esc(k):''}</span></td><td>${cell(korEnd(a))}</td><td>${cell(korEnd(b))}</td></tr>`})}
+      const g=isG(a,b,c);rows+=`<tr${j?' class="cont"':''}><td class="wn2"><b>${j===0?esc(n):''}</b> ${swatch(c)}<span class="sh">${esc(c)}${j===0?' · '+esc(k):''}</span></td>${g?`<td colspan="2"><span class="gtag">접지선 · 방향 없음</span>${cell(korEnd(a))} <b>↔</b> ${cell(korEnd(b))}</td>`:`<td>${cell(korEnd(a))}</td><td>${cell(korEnd(b))}</td>`}</tr>`})}
   return `<div class="sub" style="margin-top:4px">이 단계 연결표</div><div class="tbl steptbl"><table><thead><tr><th>선</th><th>나가는 곳 (OUT)</th><th>들어가는 곳 (IN)</th></tr></thead><tbody>${rows}</tbody></table></div>
-  <div class="note">한 줄이 선 한 가닥입니다. 전기가 왼쪽에서 나와 오른쪽으로 들어갑니다. 회색 작은 글씨는 선 색·종류와 꽂는 방법입니다.</div>`}
+  <div class="note">한 줄이 선 한 가닥입니다. 전원·신호 선은 왼쪽(OUT)에서 나와 오른쪽(IN)으로 들어갑니다. <b>접지선</b>은 전기가 오가는 길이라 방향이 없고, 양 끝 두 곳을 이어 주기만 하면 됩니다. 와고는 구멍끼리 안에서 모두 이어져 있어서, 「와고 8 · 2번 구멍」은 와고 8의 빈 구멍 중 두 번째에 꽂는다는 뜻입니다. 네모 칸 글씨는 보드에 적힌 글자입니다.</div>`}
 // ================= 1차 연결 (몸통 밖 책상에서) =================
 const BENCH=[
  {t:'부품 펼치고 이름표 붙이기',d:['부품을 오른쪽 3D 그림과 같은 자리에 펼쳐 놓습니다.','부품마다 이름표를 붙입니다. 이름은 3D 그림과 아래 선 번호표에 나온 이름을 그대로 씁니다. (예: 왼쪽 모터 드라이버)','선은 양 끝에 번호 스티커만 붙이면 됩니다.','어댑터는 아직 콘센트에 꽂지 않습니다.'],w:[],c:['부품마다 이름표를 붙였다','멀티미터를 준비했다 (직류 전압 · 저항 · 삑 소리 통전)','점퍼선, 굵은 전선, 피복 벗기는 도구, 작은 드라이버를 꺼냈다']},
