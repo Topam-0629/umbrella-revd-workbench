@@ -12,9 +12,9 @@ pre{white-space:pre-wrap;background:var(--panel);border:1px solid var(--line);bo
 </style></head><body><div class="w">
 <div><a class="back" href="./">← 우산통 작업대</a><h1>우산통 코드 받기</h1><p class="note">ESP32에 올리는 자동 운전 코드입니다. 추가 라이브러리 없이 올립니다. ESP32 보드 패키지 2.0.17로 컴파일·링크까지 확인했고, 모의 시험으로 넣기 → 올림 → 꺼냄 → 내림, 안 가져감, 60초 막힘, 팬 10분을 확인했습니다. 실물 시험은 아직입니다.</p></div>
 <section><a class="big" href="firmware/umbrella_revd.zip" download="umbrella_revd.zip">umbrella_revd.zip 받기</a>
-<p class="note" style="margin-top:10px">압축을 풀면 umbrella_revd 폴더가 나옵니다. 폴더째로 두고 umbrella_revd.ino를 Arduino IDE로 엽니다.</p></section>
-<section><h2>낱개 파일</h2><div class="files"><a href="firmware/umbrella_revd.ino" download>umbrella_revd.ino</a><a href="firmware/glyphs.h" download>glyphs.h</a><a href="firmware/README.txt" download>README.txt</a><a href="mask/mask_lid_uno.ino" download>마스크통 뚜껑 (우노)</a></div>
-<p class="note" style="margin-top:6px">낱개로 받으면 두 파일(umbrella_revd.ino, glyphs.h)을 umbrella_revd라는 같은 폴더에 넣어야 합니다.</p></section>
+<p class="note" style="margin-top:10px"><b>파일 하나</b>로 바꿨습니다(glyphs.h 필요 없음). <a href="firmware/umbrella_revd.ino" download>umbrella_revd.ino</a>만 받아서 Arduino IDE로 열면 됩니다.</p></section>
+<section><h2>낱개 파일</h2><div class="files"><a href="firmware/umbrella_revd.ino" download>umbrella_revd.ino</a><a href="firmware/README.txt" download>README.txt</a><a href="mask/mask_lid_uno.ino" download>마스크통 뚜껑 (우노)</a></div>
+<p class="note" style="margin-top:6px">umbrella_revd.ino 하나만 받아도 됩니다. 화면 글자도 파일 안에 들어 있습니다.</p></section>
 <section><h2>올리는 법</h2><pre>스마트 우산통 REV D — 자동 운전 코드 올리는 법
 
 준비
@@ -25,8 +25,8 @@ pre{white-space:pre-wrap;background:var(--panel);border:1px solid var(--line);bo
  4. 추가 라이브러리는 필요 없습니다.
 
 올리기
- 1. 이 압축을 풀면 umbrella_revd 폴더가 나옵니다. 폴더 이름을 바꾸지 마세요.
-    폴더 안에 umbrella_revd.ino와 glyphs.h가 같이 있어야 합니다.
+ 1. umbrella_revd.ino 파일 하나만 있으면 됩니다 (화면 글자도 안에 들어 있음).
+    Arduino IDE가 「폴더를 만들까요?」 하면 「확인」을 누릅니다.
  2. umbrella_revd.ino를 Arduino IDE로 엽니다.
  3. 도구 → 보드 → esp32 → ESP32 Dev Module.
  4. 도구 → 포트에서 ESP32를 고릅니다 (USB 데이터 케이블).

@@ -8,8 +8,8 @@
  4. 추가 라이브러리는 필요 없습니다.
 
 올리기
- 1. 이 압축을 풀면 umbrella_revd 폴더가 나옵니다. 폴더 이름을 바꾸지 마세요.
-    폴더 안에 umbrella_revd.ino와 glyphs.h가 같이 있어야 합니다.
+ 1. umbrella_revd.ino 파일 하나만 있으면 됩니다 (화면 글자도 안에 들어 있음).
+    Arduino IDE가 「폴더를 만들까요?」 하면 「확인」을 누릅니다.
  2. umbrella_revd.ino를 Arduino IDE로 엽니다.
  3. 도구 → 보드 → esp32 → ESP32 Dev Module.
  4. 도구 → 포트에서 ESP32를 고릅니다 (USB 데이터 케이블).
