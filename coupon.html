@@ -66,6 +66,7 @@ ol.plain{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;f
       <button role="tab" data-t="print" aria-selected="true">① 출력</button>
       <button role="tab" data-t="test" aria-selected="false">② 시험</button>
       <button role="tab" data-t="sum" aria-selected="false">③ 결과 보내기</button>
+      <button role="tab" data-t="re" aria-selected="false">④ 재시험</button>
     </nav>
     <div class="tp" id="t-print">
       <section>
@@ -104,6 +105,32 @@ ol.plain{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;f
       </section>
     </div>
     <div class="tp" id="t-test" hidden><div id="tests" class="tp"></div></div>
+    <div class="tp" id="t-re" hidden>
+      <section>
+        <h2>1차 결과 (2026-11-20)와 바꾼 것</h2>
+        <div class="tbl"><table>
+          <thead><tr><th>시험</th><th>결과</th><th>바꾼 것</th></tr></thead>
+          <tbody>
+            <tr><td>T4 인서트 구멍</td><td>인두로 셋 다 들어감, 3.7~3.8이 좋음</td><td>그대로 3.7</td></tr>
+            <tr><td>T4·T15 볼트 3.4 · 셀프탭 2.8</td><td>문제없음</td><td>그대로</td></tr>
+            <tr><td>T5 + T4 혀</td><td>헐렁함</td><td>혀와 벽 사이 여유 0.45 → <b>0.2 mm</b></td></tr>
+            <tr><td>T6 + T4 전자판 홈</td><td>약간 헐렁함</td><td>홈 3.6 → <b>3.3 mm</b> (판 3.0)</td></tr>
+            <tr><td>T7 클레비스</td><td>고리가 끝까지 안 들어가 구멍이 안 맞음</td><td>아래(모터 쪽) 고리는 두께 <b>8 mm</b>·폭 10 mm인데 틈이 6.5 mm였음 → 틈 <b>8.4</b>, 폭 <b>11</b></td></tr>
+            <tr><td>T1 + T3 받침 링</td><td>걸림 없이 쑥 지나감, 여유가 큼</td><td>그대로 (통과 기준이 「걸리지 않을 것」. 한쪽 1 mm 여유는 비·먼지와 긴 치마(95 mm)로 흔들림을 잡는 설계)</td></tr>
+          </tbody></table></div>
+        <p class="note" style="margin-top:8px">아래 몸통 2개, 위 몸통 2개를 이 값으로 고쳤습니다. 작업대 「출력」 탭의 STL과 gcode도 새 것으로 바뀌었고, 예전 파일은 「이전판_2026-10-29」 폴더에 있습니다.</p>
+      </section>
+      <section>
+        <h2>재시험 3개 (43분, 18 g)</h2>
+        <p class="note"><a href="coupon/retest3.3mf" download="재시험_3개_43분.3mf">재시험_3개_43분.3mf</a> · 조각별: <a href="coupon/R1_clevis.stl" download="R1_클레비스_틈8.4.stl">R1</a> <a href="coupon/R2_tongue_slot.stl" download="R2_혀2.8_전자판홈3.3.stl">R2</a> <a href="coupon/R3_groove.stl" download="R3_혀홈3.2.stl">R3</a></p>
+        <ol class="plain" style="margin-top:10px">
+          <li><b>R1 클레비스</b>: 액추에이터 <b>검은 모터 쪽</b> 고리를 틈에 끝까지 넣고, M3 × 16을 뒤 3.4 구멍 → 앞 2.8 구멍으로 조입니다. 고리가 바닥 받침에 얹혔을 때 구멍이 맞으면 통과.</li>
+          <li><b>R2 + 1차 T6</b>: 1차 때 뽑은 T6(두께 3.0 판)을 R2의 낮은 두 띠 사이 홈(3.3)에 꽂습니다. 손으로 밀어 들어가고 흔들림이 거의 없으면 통과.</li>
+          <li><b>R2 + R3</b>: R3를 뒤집어 R2의 높은 띠(혀 2.8)에 끼웁니다. 손으로 밀어 들어가고 크게 흔들리지 않으면 통과.</li>
+        </ol>
+        <p class="note" style="margin-top:8px">세 개 다 통과하면 몸통 본 출력을 시작해도 됩니다. 클레비스 볼트는 앞판에 3.5 mm쯤만 물리니, 헐겁게 느껴지면 M3 × 18~20으로 바꾸세요.</p>
+      </section>
+    </div>
     <div class="tp" id="t-sum" hidden>
       <section>
         <h2>메모</h2>
@@ -172,7 +199,7 @@ $('#copy').onclick=async()=>{const t=$('#sum').textContent;try{await navigator.c
 const tabs=[...document.querySelectorAll('.tabs button')];
 function showTab(t){tabs.forEach(b=>b.setAttribute('aria-selected',b.dataset.t===t));document.querySelectorAll('.tp[id^="t-"]').forEach(p=>p.hidden=p.id!=='t-'+t)}
 tabs.forEach(b=>b.onclick=()=>showTab(b.dataset.t));
-if(['print','test','sum'].includes(location.hash.slice(1)))showTab(location.hash.slice(1));
+if(['print','test','sum','re'].includes(location.hash.slice(1)))showTab(location.hash.slice(1));
 // 3D
 const cv=$('#c'),R=new THREE.WebGLRenderer({canvas:cv,antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));
 const S=new THREE.Scene();const cam=new THREE.PerspectiveCamera(32,1,1,5000);const C=new OrbitControls(cam,cv);C.enableDamping=true;
