@@ -123,6 +123,7 @@ const int  DF_VOLUME = 20;                 // 0~30
 
 // ---------------- 상태 ----------------
 enum BayState { B_EMPTY, B_STORED, B_UP, B_ERR };
+enum Screen { S_NONE, S_IDLE, S_STORE, S_LIFT, S_DOWN, S_BYE, S_WAIT, S_ERR };
 enum Cls { C_UNKNOWN, C_EMPTY, C_PRESENT };
 struct Bay {
   char name;
@@ -202,7 +203,6 @@ void tftInit() {
 }
 
 // 화면 그리기 (바뀔 때만 다시 그림)
-enum Screen { S_NONE, S_IDLE, S_STORE, S_LIFT, S_DOWN, S_BYE, S_WAIT, S_ERR };
 int shownScreen = -1, shownSig = -1;
 
 void header(uint16_t c) { tftRect(0, 0, 240, 320, COL_BLACK); tftRect(0, 0, 240, 6, c); }
