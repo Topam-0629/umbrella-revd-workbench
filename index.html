@@ -595,7 +595,7 @@ function stepTable(ws){const ns=ws.map(String);if(!ns.length)return '';let rows=
     if(!segs.length){const w=WIRE[n];if(w)rows+=`<tr><td class="wn2"><b>${esc(n)}</b><span class="sh">${esc(k)}</span></td><td>${esc(w[1])}</td><td>${esc(w[2])}</td></tr>`;continue}
     segs.forEach((x,j)=>{let [a,b]=[x[2],x[3]];if(flip(a,b))[a,b]=[b,a];const c=CN[x[1]]?x[1]:'회색';
       rows+=`<tr${j?' class="cont"':''}><td class="wn2"><b>${j===0?esc(n):''}</b> ${swatch(c)}<span class="sh">${esc(c)}${j===0?' · '+esc(k):''}</span></td><td>${cell(korEnd(a))}</td><td>${cell(korEnd(b))}</td></tr>`})}
-  return `<div class="sub">이 단계 연결표</div><div class="tbl steptbl"><table><thead><tr><th>선</th><th>나가는 곳 (OUT)</th><th>들어가는 곳 (IN)</th></tr></thead><tbody>${rows}</tbody></table></div>
+  return `<div class="sub" style="margin-top:4px">이 단계 연결표</div><div class="tbl steptbl"><table><thead><tr><th>선</th><th>나가는 곳 (OUT)</th><th>들어가는 곳 (IN)</th></tr></thead><tbody>${rows}</tbody></table></div>
   <div class="note">한 줄이 선 한 가닥입니다. 전기가 왼쪽에서 나와 오른쪽으로 들어갑니다. 회색 작은 글씨는 선 색·종류와 꽂는 방법입니다.</div>`}
 // ================= 1차 연결 (몸통 밖 책상에서) =================
 const BENCH=[
@@ -629,9 +629,9 @@ function renderBench(){
   ${ticks(BENCH.length,bCur,stepDone)}
   <div class="stephead"><span class="no">1차 연결 ${bCur} / ${BENCH.length}</span><div class="nav"><button class="btn" data-a="prev" ${bCur===1?'disabled':''}>이전</button><button class="btn pri" data-a="next" ${bCur===BENCH.length?'disabled':''}>다음 단계</button></div></div>
   <h2 class="t">${esc(s.t)}</h2>
+  ${stepTable(s.w)}
   ${bCur===1?GLOSS:''}
   <div class="sub">할 일</div><ol class="todo">${s.d.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>
-  ${stepTable(s.w)}
   ${s.k?`<div class="cmds"><span class="note">시리얼 모니터에 입력:</span>${s.k.map(k=>`<span class="kbd">${k}</span>`).join('')}</div>`:''}
   ${(()=>{const hs=new Set();WL.filter(w=>s.w.map(String).includes(w[0])).forEach(w=>[w[2],w[3]].forEach(e=>{const [i,p]=e.split('.');hs.add(korPin(i,p).how)}));return hs.size?`<div class="sub">이렇게 잇습니다</div><div class="howbox">${[...hs].map(h=>`<div>${HOWLONG[h]}</div>`).join('')}</div>`:''})()}
   <div class="sub">평면도 — 위에서 본 모습</div>${planSVG(s.w)}
